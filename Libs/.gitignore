@@ -1,0 +1,15 @@
+# Craftopia\BepInEx\core
+# Craftopia\Craftopia_Data\Managed
+#   からファイルを配置します。
+#   ソース管理には含めていません
+
+BepInEx.dll
+
+0Harmony.dll
+0Harmony.xml
+BepInEx.Harmony.dll
+
+UnityEngine.CoreModule.dll
+UnityEngine.dll
+
+Assembly-CSharp.dll

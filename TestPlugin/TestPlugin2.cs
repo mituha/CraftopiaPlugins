@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using System;
+using System.Linq;
 
 namespace TestPlugin
 {
@@ -20,6 +21,13 @@ namespace TestPlugin
             //[Logging.Console]
             //  Enabled = true
             UnityEngine.Debug.Log($"{this.GetType().Name} Awake");
+
+            //Splitの書き方でエラーになるか
+            //  MissingMethodException
+            var fields = "hoge piyo".Split(' ');
+            foreach(var field in fields) {
+                UnityEngine.Debug.Log($"{field}");
+            }
         }
     }
 }

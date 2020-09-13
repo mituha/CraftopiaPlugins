@@ -13,3 +13,7 @@ UnityEngine.CoreModule.dll
 UnityEngine.dll
 
 Assembly-CSharp.dll
+
+# UI用
+UnityEngine.UI.dll
+UnityEngine.UIModule.dll

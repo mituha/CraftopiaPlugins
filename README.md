@@ -11,6 +11,19 @@ BepInExを利用しています。
 
 参照用のDLLはLibフォルダーにコピーしてください。  
 
+プロジェクトの作成は Core 用で新規作成して、TargetFramework を書き換えています。
+
+
+## プロジェクト
+### ConsoleCommandPlugin
+コンソールコマンドの雛形
+
+### HellowWorldPlugin
+Hello world!
+
+### TestPlugin
+適当に実験用
+
 
 ## プラグインの取っ掛かり
 ### シングルトンな管理クラスっぽいやつ

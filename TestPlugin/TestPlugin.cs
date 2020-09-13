@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace TestPlugin
 {
@@ -43,6 +44,21 @@ namespace TestPlugin
                         }
                     }
                 }
+            }
+        }
+
+        private float _CheckTime = 0;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        void Update() {
+            //MonoBehaviour派生で単純にUnityのUpdate動作
+            //  なので、きっとなんでもできる
+            _CheckTime += Time.deltaTime;
+            if(_CheckTime >= 10) {
+                UnityEngine.Debug.Log($"Update {Time.deltaTime}/{_CheckTime}");
+                _CheckTime = 0;
             }
         }
     }

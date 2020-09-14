@@ -23,8 +23,14 @@ namespace ReSTAR.Craftopia.Plugin
             harmony.PatchAll();
         }
 
-        [HarmonyPatch(typeof(OcUI_ChatHandler))]   //https://harmony.pardeike.net/articles/annotations.html
-        [HarmonyPatch("TrySendMessage")]   //クラスとメソッド等をHarmonyPatch属性で指定
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
+        /// クラスとメソッド等をHarmonyPatch属性で指定
+        /// １つの属性でクラスとメソッドを指定できるので、こちらのほうがわかりやすいかも
+        /// </remarks>
+        [HarmonyPatch(typeof(OcUI_ChatHandler), "TrySendMessage")]   //https://harmony.pardeike.net/articles/annotations.html
         private class TrySendMessagePatch
         {
             private class Command
@@ -62,7 +68,7 @@ namespace ReSTAR.Craftopia.Plugin
 
                 //コマンド確認
                 var command = _Commands.FirstOrDefault(c => c.Cmd == cmd);
-                bool handled = command?.Action(command,parameters) ?? false;
+                bool handled = command?.Action(command, parameters) ?? false;
                 if (handled) {
                     //送った場合、そのままだと入力が残る
                     if (OcUI_ChatHandler.Inst != null) {

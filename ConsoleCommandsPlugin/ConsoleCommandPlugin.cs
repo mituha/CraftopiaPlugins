@@ -4,6 +4,7 @@ using Oc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace ReSTAR.Craftopia.Plugin
 {
@@ -50,6 +51,7 @@ namespace ReSTAR.Craftopia.Plugin
                 _Commands.Add(new Command("echo", DoEcho));
                 _Commands.Add(new Command("now", DoNow));
                 _Commands.Add(new Command("time", DoTime));
+                _Commands.Add(new Command("log", DoLog));
                 //TODO  必要なコマンドを追加
             }
 
@@ -117,7 +119,7 @@ namespace ReSTAR.Craftopia.Plugin
             private static bool DoTime(Command command, string[] parameters) {
                 UnityEngine.Debug.Log($"DoTime");
                 var dayMng = OcDayMng.Inst;
-                if(dayMng == null) {
+                if (dayMng == null) {
                     UnityEngine.Debug.Log($"OcDayMng.Inst is null");
                     return false;
                 }
@@ -133,6 +135,35 @@ namespace ReSTAR.Craftopia.Plugin
                 PopMessage(message);
 
                 return true;
+            }
+            private static bool DoLog(Command command, string[] parameters) {
+                UnityEngine.Debug.Log($"DoLog");
+                bool on = false;
+                if(parameters.Length >= 1) {
+                    //TODO 汎用的なParse
+                    var p = parameters[0];
+                    if(!bool.TryParse(p,out on)) {
+                        int tmp;
+                        if(int.TryParse(p,out tmp)) {
+                            on = tmp != 0;
+                        }
+                    }
+                }
+
+                //二重に追加されない意味も含めて一旦外す
+                Application.logMessageReceived -= OnApplicationLogMessageReceived;
+
+                if (on) {
+                    Application.logMessageReceived += OnApplicationLogMessageReceived;
+                }
+
+                return true;
+            }
+
+            private static void OnApplicationLogMessageReceived(string condition, string stackTrace, LogType type) {
+                //TODO  良さげなフォーマット
+                var message = $"[{type}]{condition} : {stackTrace}";
+                PopMessage(message);
             }
         }
     }

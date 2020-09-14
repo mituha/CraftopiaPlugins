@@ -13,7 +13,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "README", "README", "{1F085A
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleCommandsPlugin", "ConsoleCommandsPlugin\ConsoleCommandsPlugin.csproj", "{09A9A17F-69E9-4C7A-95F8-6937C5795999}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleCommandsPlugin", "ConsoleCommandsPlugin\ConsoleCommandsPlugin.csproj", "{09A9A17F-69E9-4C7A-95F8-6937C5795999}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestUtility", "TestUtility\TestUtility.csproj", "{8921A602-97CA-48B5-8738-08ABA6577564}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{09A9A17F-69E9-4C7A-95F8-6937C5795999}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09A9A17F-69E9-4C7A-95F8-6937C5795999}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{09A9A17F-69E9-4C7A-95F8-6937C5795999}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8921A602-97CA-48B5-8738-08ABA6577564}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8921A602-97CA-48B5-8738-08ABA6577564}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8921A602-97CA-48B5-8738-08ABA6577564}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8921A602-97CA-48B5-8738-08ABA6577564}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

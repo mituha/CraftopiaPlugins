@@ -14,47 +14,49 @@ namespace TestPlugin
     public class DebugInformationPlugin : BaseUnityPlugin
     {
         void Start() {
-            var objCanvas = new GameObject("DebugInformationCanvas");
-            var canvas = objCanvas.AddComponent<Canvas>();
-            var scaler = objCanvas.AddComponent<CanvasScaler>();
-            //TODO VerticalLayoutGroup
+            if (true) {
+                //動的な追加
+
+                var objCanvas = new GameObject("DebugInformationCanvas");
+                objCanvas.layer = LayerMask.NameToLayer("UI");
+
+                var canvas = objCanvas.AddComponent<Canvas>();
+                var scaler = objCanvas.AddComponent<CanvasScaler>();
+                //TODO VerticalLayoutGroup
+                canvas.sortingLayerID = 5;
+                canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+                canvas.pixelPerfect = false;
+                canvas.sortingOrder = 5;    //一番前
+                canvas.targetDisplay = 0;
+
+                scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+                //scaler.referenceResolution = new Vector2(x, y);
+                scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+                scaler.matchWidthOrHeight = 0f;
+                scaler.scaleFactor = 1.0f;
+                scaler.referencePixelsPerUnit = 100f;
+
+                //TODO 1行毎に作る？
+                var objText = new GameObject("DebugInformationText");
+                objText.transform.parent = objCanvas.transform;
+                var text = objText.AddComponent<Text>();
+
+                RectTransform trans = objText.GetComponent<RectTransform>();
+
+                trans.localPosition = new Vector3(0f, 0f, 0f);
+
+                trans.sizeDelta = new Vector2(128.0f, 64.0f);
 
 
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            canvas.pixelPerfect = false;
-            canvas.sortingOrder = 0;
-            canvas.targetDisplay = 0;
+                trans.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
 
+                trans.localScale = new Vector3(1f, 1f, 1f);
 
-
-            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            //scaler.referenceResolution = new Vector2(x, y);
-            scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
-            scaler.matchWidthOrHeight = 0f;
-            scaler.scaleFactor = 1.0f;
-            scaler.referencePixelsPerUnit = 100f;
-
-            //TODO 1行毎に作る？
-            var objText = new GameObject("DebugInformationText");
-            objText.transform.parent = objCanvas.transform;
-            var text = objText.AddComponent<Text>();
-
-            RectTransform trans = objText.GetComponent<RectTransform>();
-
-            trans.localPosition = new Vector3(0f, 0f, 0f);
-
-            trans.sizeDelta = new Vector2(500.0f, 500.0f);
-
-
-            trans.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
-
-            trans.localScale = new Vector3(1f, 1f, 1f);
-
-            text.text = "Hello world!";
-
-            //TODO フォント指定とか？
-            //  設定が足りていないかその他でまだ表示されない
-            //  既存のUI要素を利用するか、フォント情報等をコピーしたほうが良い？
+                text.text = "Hello world!";
+                text.color = Color.red;
+                Font font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+                text.font = font;
+            }
         }
 
         private float _CheckTime = 0;

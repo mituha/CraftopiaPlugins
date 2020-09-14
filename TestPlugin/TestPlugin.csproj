@@ -28,6 +28,10 @@
     </Reference>
      <Reference Include="UnityEngine.UIModule">
       <HintPath>..\Libs\UnityEngine.UIModule.dll</HintPath>
-    </Reference>  </ItemGroup>
+    </Reference>
+     <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>..\Libs\UnityEngine.TextRenderingModule.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 
 </Project>

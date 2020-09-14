@@ -2,6 +2,10 @@
 # Craftopia\Craftopia_Data\Managed
 #   からファイルを配置します。
 #   ソース管理には含めていません
+!.gitignore
+*.*
+
+# 以下は必要ファイル
 
 BepInEx.dll
 
@@ -17,3 +21,5 @@ Assembly-CSharp.dll
 # UI用
 UnityEngine.UI.dll
 UnityEngine.UIModule.dll
+#Font
+UnityEngine.TextRenderingModule.dll

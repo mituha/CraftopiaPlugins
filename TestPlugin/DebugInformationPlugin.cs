@@ -15,8 +15,13 @@ namespace TestPlugin
     {
         void Start() {
             if (true) {
-                //動的な追加
+                //uGUIを追加することで、ゲーム画面上に任意に表示を追加します。
+                //  下記でとりあえずはタイトル画面に描画されることは確認
+                //TODO  シーン切り替わりで消えるので、シーン毎に再生成が必要
+                //          このプロジェクトのSceneCheckPlugin参照
+                //TODO  UnityのUIのレイアウト関連まだわかってない
 
+                //動的な追加
                 var objCanvas = new GameObject("DebugInformationCanvas");
                 objCanvas.layer = LayerMask.NameToLayer("UI");
 

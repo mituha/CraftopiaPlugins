@@ -52,6 +52,7 @@ namespace ReSTAR.Craftopia.Plugin
                 _Commands.Add(new Command("now", DoNow));
                 _Commands.Add(new Command("time", DoTime));
                 _Commands.Add(new Command("log", DoLog));
+                _Commands.Add(new Command("scene", GetSceneName));
                 //TODO  必要なコマンドを追加
             }
 
@@ -139,12 +140,12 @@ namespace ReSTAR.Craftopia.Plugin
             private static bool DoLog(Command command, string[] parameters) {
                 UnityEngine.Debug.Log($"DoLog");
                 bool on = false;
-                if(parameters.Length >= 1) {
+                if (parameters.Length >= 1) {
                     //TODO 汎用的なParse
                     var p = parameters[0];
-                    if(!bool.TryParse(p,out on)) {
+                    if (!bool.TryParse(p, out on)) {
                         int tmp;
-                        if(int.TryParse(p,out tmp)) {
+                        if (int.TryParse(p, out tmp)) {
                             on = tmp != 0;
                         }
                     }
@@ -165,6 +166,16 @@ namespace ReSTAR.Craftopia.Plugin
                 var message = $"[{type}]{condition} : {stackTrace}";
                 PopMessage(message);
             }
+
+            private static bool GetSceneName(Command command, string[] parameters) {
+                UnityEngine.Debug.Log($"GetSceneName");
+                string name = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+
+                PopMessage(name);
+
+                return true;
+            }
+
         }
     }
 }

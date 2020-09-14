@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace ReSTAR.Craftopia.Plugin
 {
-    [BepInPlugin("me.mituha.craftopia.plugins.consolecommandplugin", "ConsoleCommand Plug-In", "1.0.0.0")]
+    [BepInPlugin("me.mituha.craftopia.plugins.consolecommandplugin", "ConsoleCommand Plug-In", "0.1.0.0")]
     public class ConsoleCommandPlugin : BaseUnityPlugin
     {
         void Awake() {
@@ -49,6 +49,7 @@ namespace ReSTAR.Craftopia.Plugin
             static TrySendMessagePatch() {
                 _Commands.Add(new Command("echo", DoEcho));
                 _Commands.Add(new Command("now", DoNow));
+                _Commands.Add(new Command("time", DoTime));
                 //TODO  必要なコマンドを追加
             }
 
@@ -109,6 +110,26 @@ namespace ReSTAR.Craftopia.Plugin
                 //TODO  ゲーム内時間も取れそう
 
                 string message = System.DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
+                PopMessage(message);
+
+                return true;
+            }
+            private static bool DoTime(Command command, string[] parameters) {
+                UnityEngine.Debug.Log($"DoTime");
+                var dayMng = OcDayMng.Inst;
+                if(dayMng == null) {
+                    UnityEngine.Debug.Log($"OcDayMng.Inst is null");
+                    return false;
+                }
+
+                //TODO どのような扱いか検証
+                string message = $"{dayMng.CurDayStr}";
+                if (parameters.Length >= 1) {
+                    //TODO とりあえず、なにか入っていたら詳細追加
+                    message += $" : {dayMng.CurDay} {dayMng.CurHour}:{dayMng.CurMin_60}({dayMng.CurMin_Norm}) {(dayMng.isNight() ? "Night" : "Day")}";
+                    //1 8.45253:27(0.4525299) Day
+                }
+
                 PopMessage(message);
 
                 return true;

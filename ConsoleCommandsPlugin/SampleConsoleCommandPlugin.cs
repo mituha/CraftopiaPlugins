@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using HarmonyLib;
 using Oc;
+using Oc.Item;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -111,6 +112,34 @@ namespace ReSTAR.Craftopia.Plugin
 
             return true;
         }
+        private abstract class Parameter
+        {
+            public static Parameter<T> Create<T>(string title, Func<T, string> getValue) {
+                return new Parameter<T>(title, getValue);
+            }
+
+            protected Parameter(string title) {
+                this.Title = title;
+            }
+            public string Title { get; }
+
+            public string GetValue<T>(T data) {
+                return GetValueCore(data);
+            }
+            protected abstract string GetValueCore(object data);
+        }
+        private class Parameter<T> : Parameter
+        {
+            public Parameter(string title, Func<T, string> getValue) : base(title) {
+                _GetValue = getValue;
+            }
+
+            private readonly Func<T, string> _GetValue;
+            protected override string GetValueCore(object data) {
+                T d = (T)data;
+                return _GetValue(d);
+            }
+        }
 
         private bool GetList(string command, string subCommand, string[] parameters) {
             UnityEngine.Debug.Log($"GetList {subCommand}");
@@ -121,6 +150,34 @@ namespace ReSTAR.Craftopia.Plugin
             if (subCommand == "canvas") {
                 objs = objs.Where(o => o.GetComponent<Canvas>() != null).ToArray();
                 values.AddRange(objs.Select(o => o.name).ToArray());
+            } else if (subCommand == "item") {
+                ItemData[] validItemDataList = Traverse.Create(OcItemDataMng.Inst).Field<ItemData[]>("validItemDataList").Value;
+
+                //TODO 4.6はTupleまだ？
+                List<Parameter> dataParameters = new List<Parameter>();
+                dataParameters.Add(Parameter.Create<ItemData>("id", d => d.Id.ToString("X4")));
+                dataParameters.Add(Parameter.Create<ItemData>("DisplayName", d => d.DisplayName));
+                dataParameters.Add(Parameter.Create<ItemData>("Price", d => d.Price.ToString()));
+
+                //TODO 必要に応じて
+                //          parameterで必要な項目の指定とか？
+                //dataParameters.Add(Parameter.Create<ItemData>("Price", d => d.Price.ToString()));
+
+                dataParameters.Add(Parameter.Create<ItemData>("Description", d => d.Description));
+
+                var headers = string.Join(" | ", dataParameters.Select(p => p.Title));
+                UnityEngine.Debug.Log($"| {headers} |  ");
+                var lines = string.Join(" | ", dataParameters.Select(p => "----"));
+                UnityEngine.Debug.Log($"| {lines} |  ");
+
+                foreach (var data in validItemDataList) {
+                    //TODO フォーマット
+                    values.Add(string.Join(" ", dataParameters.Select(p => p.GetValue(data))));
+
+                    var ps = string.Join(" | ", dataParameters.Select(p => p.GetValue(data)));
+                    UnityEngine.Debug.Log($"| {ps} |  ");
+                }
+
             } else {
                 values.AddRange(objs.Select(o => o.name).ToArray());
             }

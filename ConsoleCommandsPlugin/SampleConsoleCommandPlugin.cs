@@ -22,6 +22,8 @@ namespace ReSTAR.Craftopia.Plugin
             AddCommand("time", DoTime);
             AddCommand("log", DoLog);
             AddCommand("scene", GetSceneName);
+            //サブコマンドの * は任意
+            AddCommand("list", "*", GetList);
         }
 
         void Awake() {
@@ -106,6 +108,26 @@ namespace ReSTAR.Craftopia.Plugin
             string name = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
 
             PopMessage(name);
+
+            return true;
+        }
+
+        private bool GetList(string command, string subCommand, string[] parameters) {
+            UnityEngine.Debug.Log($"GetList {subCommand}");
+            subCommand = subCommand.ToLower();  //小文字として比較
+
+            List<string> values = new List<string>();
+            var objs = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
+            if (subCommand == "canvas") {
+                objs = objs.Where(o => o.GetComponent<Canvas>() != null).ToArray();
+                values.AddRange(objs.Select(o => o.name).ToArray());
+            } else {
+                values.AddRange(objs.Select(o => o.name).ToArray());
+            }
+
+            //改行も有効
+            string message = string.Join(Environment.NewLine, values);
+            PopMessage(message);
 
             return true;
         }

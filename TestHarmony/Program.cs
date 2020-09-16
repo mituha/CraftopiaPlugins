@@ -17,6 +17,8 @@ namespace TestHarmonyX
 
             var game = new TargetGameClass();
             game.DoTest();
+            var retValue = game.GetValue();
+            WriteLine($"GetValue = {retValue}");
         }
         private static void WriteLine(string message) {
             Debug.WriteLine(message);
@@ -51,6 +53,16 @@ namespace TestHarmonyX
 
                 WriteLine($"<< {this.GetType().Name}.DoTest02");
             }
+
+            public Guid GetValue() {
+                WriteLine($">> {this.GetType().Name}.GetValue");
+                var retValue = Guid.NewGuid();
+                try {
+                    return retValue;
+                } finally {
+                    WriteLine($"<< {this.GetType().Name}.GetValue {retValue}");
+                }
+            }
         }
 
         /// <summary>
@@ -79,7 +91,7 @@ namespace TestHarmonyX
 
                 //trueでターゲットメソッド実行。falseでは実行されない
                 //  なお、falseでDoTestが呼ばれない場合も Postfixは呼ばれる
-                return true;    
+                return true;
             }
 
             /// <summary>
@@ -137,6 +149,52 @@ namespace TestHarmonyX
 
         }
 
+        /// <summary>
+        /// パッチ用のクラス
+        /// </summary>
+        /// <remarks>
+        /// 値を返すメソッドへの割り込み
+        /// </remarks>
+        [HarmonyPatch(typeof(TargetGameClass), "GetValue")]
+        private class Patch03
+        {
+            /// <summary>
+            /// Prefixはターゲットメソッドの前に実行
+            /// </summary>
+            /// <returns></returns>
+            /// <remarks>
+            /// 明示的に指定がない場合、名前が Prefix のメソッドが使用される
+            /// </remarks>
+            static bool Prefix() {
+                WriteLine($"** Patch03 Prefix");
 
+                //falseを返して実行させない
+                return false;
+            }
+
+            /// <summary>
+            /// Postfixはターゲットメソッドの後に実行
+            /// </summary>
+            /// <remarks>
+            /// 明示的に指定がない場合、名前が Postfix のメソッドが使用される
+            /// </remarks>
+            static void Postfix() {
+                WriteLine($"** Patch02 Postfix");
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="__result"></param>
+            /// <remarks>
+            /// ref で __result な名前の場合、返り値を調整可能
+            /// </remarks>
+            static void Postfix(ref Guid __result) {
+                //Prefix = false でターゲットメソッドが呼ばれない時はデフォルト値？
+                WriteLine($"** Patch03 Postfix {__result}");
+                __result = Guid.NewGuid();
+                WriteLine($"<< Patch03 Postfix {__result}");
+            }
+        }
     }
 }

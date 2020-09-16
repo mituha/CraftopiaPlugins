@@ -169,8 +169,18 @@ namespace TestHarmonyX
                 WriteLine($"** Patch03 Prefix");
 
                 //falseを返して実行させない
+                return true;
+            }
+
+            static bool Prefix(ref Guid __result) {
+                WriteLine($"** Patch03 Prefix {__result}");
+                __result = Guid.NewGuid();
+                WriteLine($"<< Patch03 Prefix {__result}");
+
+                //falseを返すと返り値有効
                 return false;
             }
+#if false   //Prefixでの返り値テスト用に除外
 
             /// <summary>
             /// Postfixはターゲットメソッドの後に実行
@@ -181,6 +191,7 @@ namespace TestHarmonyX
             static void Postfix() {
                 WriteLine($"** Patch02 Postfix");
             }
+ 
 
             /// <summary>
             /// 
@@ -195,6 +206,7 @@ namespace TestHarmonyX
                 __result = Guid.NewGuid();
                 WriteLine($"<< Patch03 Postfix {__result}");
             }
+#endif
         }
     }
 }

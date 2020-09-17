@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace ReSTAR.Craftopia.Plugin
 {
@@ -177,7 +178,17 @@ namespace ReSTAR.Craftopia.Plugin
                     var ps = string.Join(" | ", dataParameters.Select(p => p.GetValue(data)));
                     UnityEngine.Debug.Log($"| {ps} |  ");
                 }
+            }else if(subCommand == "scene") {
+                //Unityのシーンの調査
+                int count = SceneManager.sceneCount;
+                UnityEngine.Debug.Log($"sceneCount : {count}");
+                values.Add($"sceneCount : {count}");
 
+                for (int i = 0; i < count; i++) {
+                    var scene = SceneManager.GetSceneAt(i);
+                    UnityEngine.Debug.Log($"{i} : {scene.name}");
+                    values.Add($"{i} : {scene.name}");
+                }
             } else {
                 values.AddRange(objs.Select(o => o.name).ToArray());
             }

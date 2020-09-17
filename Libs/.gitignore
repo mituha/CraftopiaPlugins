@@ -21,5 +21,7 @@ Assembly-CSharp.dll
 # UI用
 UnityEngine.UI.dll
 UnityEngine.UIModule.dll
-#Font
+# Font
 UnityEngine.TextRenderingModule.dll
+# Rigidbody
+UnityEngine.PhysicsModule.dll

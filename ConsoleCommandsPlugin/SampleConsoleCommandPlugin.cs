@@ -26,6 +26,7 @@ namespace ReSTAR.Craftopia.Plugin
             AddCommand("scene", GetSceneName);
             //サブコマンドの * は任意
             AddCommand("list", "*", GetList);
+            AddCommand("unity", "*", ExecuteUnityCommand);
         }
 
         void Awake() {
@@ -178,7 +179,7 @@ namespace ReSTAR.Craftopia.Plugin
                     var ps = string.Join(" | ", dataParameters.Select(p => p.GetValue(data)));
                     UnityEngine.Debug.Log($"| {ps} |  ");
                 }
-            }else if(subCommand == "scene") {
+            } else if (subCommand == "scene") {
                 //Unityのシーンの調査
                 int count = SceneManager.sceneCount;
                 UnityEngine.Debug.Log($"sceneCount : {count}");
@@ -197,6 +198,38 @@ namespace ReSTAR.Craftopia.Plugin
             string message = string.Join(Environment.NewLine, values);
             PopMessage(message);
 
+            return true;
+        }
+
+
+        private bool ExecuteUnityCommand(string command, string subCommand, string[] parameters) {
+            UnityEngine.Debug.Log($"Unity {subCommand}");
+            subCommand = subCommand.ToLower();  //小文字として比較
+
+            PrimitiveType? type = null;
+            foreach (var t in Enum.GetValues(typeof(PrimitiveType)).OfType<PrimitiveType>()) {
+                if (subCommand == t.ToString().ToLower()) {
+                    type = t;
+                    break;
+                }
+            }
+
+            if (type != null) {
+                var primitive = GameObject.CreatePrimitive(type.Value);
+                primitive.AddComponent<Rigidbody>();
+
+                //プレーヤーの座標の取得
+                //  現状、足元になる？
+                var instPl = OcPlMng.Inst;
+                if (instPl != null) {
+                    
+                    var pos = instPl.getPlPos(0);
+                    if (pos != null) {
+                        //TODO 向きは？
+                        primitive.transform.position = pos.Value + new Vector3(0f,2.0f,0f); //頭上に出す
+                    }
+                }
+            }
             return true;
         }
     }

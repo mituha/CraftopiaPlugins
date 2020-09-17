@@ -14,3 +14,8 @@ ConsoleCommandPluginの派生クラスを作成することで、コマンド入
 	+ メッセージをそのまま返す
 * `/now`
 	+ 日時を返す
+* `/log on`
+* `/scene`
+* `/list item`
+* `/list scene`
+* `/unity sphere`

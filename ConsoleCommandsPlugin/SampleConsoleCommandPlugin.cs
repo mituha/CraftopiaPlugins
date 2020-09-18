@@ -2,6 +2,7 @@
 using HarmonyLib;
 using Oc;
 using Oc.Item;
+using SR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -259,7 +260,14 @@ namespace ReSTAR.Craftopia.Plugin
             }
         }
         private IEnumerable<string> EnumerateObject(GameObject obj, string indent) {
+            if (!obj.GetActive()) { //非表示のオブジェクトは表示しない
+                yield return $"{indent}{obj.name}(inactive)";
+                yield break;
+            }
             yield return $"{indent}{obj.name}";
+            foreach(var c in obj.GetComponents(typeof(Component))) {
+                yield return $"{indent} -({c.name}:{c.GetType().Name})";
+            }
 
             indent += " ";
             int count = obj.transform.childCount;

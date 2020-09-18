@@ -164,5 +164,15 @@ namespace ReSTAR.Craftopia.Plugin
             #endregion
 
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public static SROptions GetSROptions() {
+            return SROptions.Current;
+        }
+
+
     }
 }

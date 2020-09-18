@@ -28,6 +28,7 @@ namespace ReSTAR.Craftopia.Plugin
             //サブコマンドの * は任意
             AddCommand("list", "*", GetList);
             AddCommand("unity", "*", ExecuteUnityCommand);
+            AddCommand("ui", "*", ExecuteUICommand);
         }
 
         void Awake() {
@@ -265,6 +266,7 @@ namespace ReSTAR.Craftopia.Plugin
                 yield break;
             }
             yield return $"{indent}{obj.name}";
+
             foreach(var c in obj.GetComponents(typeof(Component))) {
                 yield return $"{indent} -({c.name}:{c.GetType().Name})";
             }
@@ -279,6 +281,21 @@ namespace ReSTAR.Craftopia.Plugin
             }
         }
 
+        private bool ExecuteUICommand(string command, string subCommand, string[] parameters) {
 
+            subCommand = subCommand.ToLower();  //小文字として比較
+            bool handled = true;
+            bool hide = false;
+            if(subCommand == "hide" || subCommand == "off" || subCommand == "0") {
+                hide = true;
+            }
+
+            //SROptions.IsHideUIの変更で通知から表示切り替えまで走る
+            //  L-Ctrl でも切り替わる？
+            var options = InstanceResolver.GetSROptions();
+            options.IsHideUI = hide;
+
+            return handled;
+        }
     }
 }

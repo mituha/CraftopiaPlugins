@@ -205,6 +205,7 @@ namespace ReSTAR.Craftopia.Plugin
         private bool ExecuteUnityCommand(string command, string subCommand, string[] parameters) {
             UnityEngine.Debug.Log($"Unity {subCommand}");
             subCommand = subCommand.ToLower();  //小文字として比較
+            bool handled = true;
 
             PrimitiveType? type = null;
             foreach (var t in Enum.GetValues(typeof(PrimitiveType)).OfType<PrimitiveType>()) {
@@ -222,15 +223,54 @@ namespace ReSTAR.Craftopia.Plugin
                 //  現状、足元になる？
                 var instPl = OcPlMng.Inst;
                 if (instPl != null) {
-                    
+
                     var pos = instPl.getPlPos(0);
                     if (pos != null) {
                         //TODO 向きは？
-                        primitive.transform.position = pos.Value + new Vector3(0f,2.0f,0f); //頭上に出す
+                        primitive.transform.position = pos.Value + new Vector3(0f, 2.0f, 0f); //頭上に出す
                     }
                 }
+            }else if (subCommand == "test") {
+                //特定シーンのオブジェクト調査
+                var scene = SceneManager.GetSceneByName("OcScene_PlMasterUI");
+                var infos = EnumerateObject(scene).ToArray();
+                string message = string.Join(Environment.NewLine, infos);
+                PopMessage(message);
+                foreach(var info in infos) {
+                    UnityEngine.Debug.Log(info);
+                }
+            } else {
+                handled = false;
             }
-            return true;
+
+            return handled;
         }
+
+        /// <summary>
+        /// シーンに含まれるオブジェクトを列挙します
+        /// </summary>
+        /// <param name="scene"></param>
+        private IEnumerable<string> EnumerateObject(Scene scene) {
+            yield return $"Scene : {scene.name}";
+
+            var objs = scene.GetRootGameObjects();
+            foreach (var s in objs.SelectMany(o => EnumerateObject(o, string.Empty))) {
+                yield return s;
+            }
+        }
+        private IEnumerable<string> EnumerateObject(GameObject obj, string indent) {
+            yield return $"{indent}{obj.name}";
+
+            indent += " ";
+            int count = obj.transform.childCount;
+            for (int i = 0; i < count; i++) {
+                var child = obj.transform.GetChild(i);
+                foreach (var s in EnumerateObject(child.gameObject, indent)) {
+                    yield return s;
+                }
+            }
+        }
+
+
     }
 }

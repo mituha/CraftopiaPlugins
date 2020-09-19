@@ -31,6 +31,8 @@ namespace ReSTAR.Craftopia.Plugin
             AddCommand("ui", "*", ExecuteUICommand);
         }
 
+        private readonly SceneChecker _SceneChecker = new SceneChecker();
+
         void Awake() {
             //出力を確認するには、BepInEx.cfg の設定変更が必要
             //[Logging]
@@ -41,6 +43,9 @@ namespace ReSTAR.Craftopia.Plugin
 
             //Harmonyのパッチを使用するため呼び出し
             PatchAll();
+
+            _SceneChecker.IsAutoCheckObjects = false;   //GameObjectのチェックを自動で行いたい場合 true
+            _SceneChecker.Initialize();
         }
         private bool DoEcho(string command, string[] parameters) {
             UnityEngine.Debug.Log($"DoEcho");
@@ -232,13 +237,13 @@ namespace ReSTAR.Craftopia.Plugin
                         primitive.transform.position = pos.Value + new Vector3(0f, 2.0f, 0f); //頭上に出す
                     }
                 }
-            }else if (subCommand == "test") {
+            } else if (subCommand == "test") {
                 //特定シーンのオブジェクト調査
                 var scene = SceneManager.GetSceneByName("OcScene_PlMasterUI");
                 var infos = EnumerateObject(scene).ToArray();
                 string message = string.Join(Environment.NewLine, infos);
                 PopMessage(message);
-                foreach(var info in infos) {
+                foreach (var info in infos) {
                     UnityEngine.Debug.Log(info);
                 }
             } else {
@@ -267,7 +272,7 @@ namespace ReSTAR.Craftopia.Plugin
             }
             yield return $"{indent}{obj.name}";
 
-            foreach(var c in obj.GetComponents(typeof(Component))) {
+            foreach (var c in obj.GetComponents(typeof(Component))) {
                 yield return $"{indent} -({c.name}:{c.GetType().Name})";
             }
 
@@ -286,7 +291,7 @@ namespace ReSTAR.Craftopia.Plugin
             subCommand = subCommand.ToLower();  //小文字として比較
             bool handled = true;
             bool hide = false;
-            if(subCommand == "hide" || subCommand == "off" || subCommand == "0") {
+            if (subCommand == "hide" || subCommand == "off" || subCommand == "0") {
                 hide = true;
             }
 

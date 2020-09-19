@@ -32,7 +32,7 @@ namespace TestUtility
                 int count = commands.Count;
                 for (int i = 0; i < count; i++) {
                     var cmd = commands[i];
-                    Console.WriteLine($"{i}:{cmd}");
+                    Console.WriteLine($"{i}:{cmd.DisplayName}");
                 }
                 Console.Write("処理選択...>");
                 var input = Console.ReadLine().Trim();

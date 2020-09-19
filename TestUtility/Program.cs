@@ -11,7 +11,7 @@ namespace TestUtility
             List<Command> commands = new List<Command>();
             foreach (var t in Assembly.GetExecutingAssembly().GetTypes()) {
                 if (t.IsClass && !t.IsAbstract
-                  && t.BaseType == typeof(Command)) {
+                  && typeof(Command).IsAssignableFrom(t)) {
                     //とりあえず、インスタンス作って追加
                     commands.Add(Activator.CreateInstance(t) as Command);
                 }

@@ -2,7 +2,7 @@
 using System;
 using System.Diagnostics;
 
-namespace TestHarmonyX
+namespace TestHarmony
 {
     class Program
     {
@@ -19,8 +19,15 @@ namespace TestHarmonyX
             game.DoTest();
             var retValue = game.GetValue();
             WriteLine($"GetValue = {retValue}");
+
+            if (true) {
+                var test = new CombiningAnnotationsTestTargetClass();
+                test.OnMenuUIShow();
+                test.OnMenuUIHide();
+
+            }
         }
-        private static void WriteLine(string message) {
+        public static void WriteLine(string message) {
             Debug.WriteLine(message);
             Console.WriteLine(message);
 

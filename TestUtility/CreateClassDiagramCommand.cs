@@ -13,14 +13,24 @@ namespace TestUtility
     /// </summary>
     internal abstract class CreateClassDiagramCommand : Command
     {
-        protected CreateClassDiagramCommand(Type baseType) : base($"{baseType.Name}列挙") {
+        protected CreateClassDiagramCommand(Type baseType, params Type[] sentinelTypes) : base($"{baseType.Name}列挙") {
             this.BaseType = baseType;
+            this.SentinelTypes = sentinelTypes ?? Array.Empty<Type>();
         }
 
         private Type BaseType { get; }
 
+        /// <summary>
+        /// 派生クラスを列挙しない型を取得します
+        /// </summary>
+        /// <remarks>
+        /// 派生が多く、別途調査する型を指定します。
+        /// </remarks>
+        private Type[] SentinelTypes { get; }
+
         public override void Execute() {
             var baseType = this.BaseType;
+            var sentinelTypes = this.SentinelTypes;
 
             var a = Program.AssemblyCSharp;
 
@@ -38,6 +48,13 @@ namespace TestUtility
                 if (!baseType.IsAssignableFrom(t)) {
                     continue;
                 }
+                //番兵型チェック
+                if (sentinelTypes.Any() && !sentinelTypes.Contains(t)) {
+                    if (sentinelTypes.Any(s => s.IsAssignableFrom(t))) {
+                        continue;
+                    }
+                }
+
                 types.Add(t);
             }
             if (types.Any()) {
@@ -65,6 +82,7 @@ namespace TestUtility
 
             foreach (var t in types) {
                 string opt = t.IsAbstract ? "abstract" : "";
+                //表としては基本クラスは異なる場合のみ表示
                 WriteLine($"| {t.Name}  | {((t.BaseType != this.BaseType) ? t.BaseType?.Name : "")}    | {opt}  |  ");
             }
         }
@@ -81,9 +99,6 @@ namespace TestUtility
             WriteLine($"```mermaid");
             WriteLine($"classDiagram");
 
-            //基本クラス
-            WriteClassDiagram(this.BaseType);
-
             foreach (var t in types) {
                 WriteClassDiagram(t);
                 //TODO インターフェース？
@@ -92,7 +107,9 @@ namespace TestUtility
         }
         private void WriteClassDiagram(Type t) {
             WriteLine("");
-            if(t.BaseType != this.BaseType && t != this.BaseType) {
+            if (t != this.BaseType) {
+                //基本クラス以外は継承表示が必要
+
                 //継承関係
                 WriteLine($"\t{t.BaseType.Name} <|-- {t.Name}");
             }

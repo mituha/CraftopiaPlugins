@@ -106,6 +106,10 @@ namespace ReSTAR.Craftopia.Plugin
             yield return $"{indent}{obj.name}{(inactive ? "(inactive)" : "")}";
 
             foreach (var c in obj.GetComponents(typeof(Component))) {
+                if(c is Transform) {
+                    continue;   //Transformは必須であるため出力から除外
+                }
+
                 yield return $"{indent} -({c.name}:{c.GetType().Name})";
             }
 

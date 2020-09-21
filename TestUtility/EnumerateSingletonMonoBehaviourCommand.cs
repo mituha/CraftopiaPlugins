@@ -40,7 +40,6 @@ namespace TestUtility
                 foreach (var g in singletonTypes.GroupBy(t => t.Namespace)) {
                     WriteLine($"| {g.Key} |         |           |  ");
                     foreach (var t in g) {
-                        WriteLine($"{t.Name}");
                         WriteLine($"| {t.Namespace} | {t.Name} |    | ");
                     }
                 }

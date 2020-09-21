@@ -12,6 +12,7 @@ SingletonMonoBehaviour<T>派生クラス
 特に、XxxMgrとついているクラスは何らかの管理クラスです。  
 実際に追いかけるのであれば、`OcGameMng` から確認するのが良いです。  
 
+下記表は[TestUtility](../TestUtility/README.md)を使用して抽出しています。
 
 | 名前空間 | クラス     |       |  
 |----------|------------|-------|  

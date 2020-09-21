@@ -33,8 +33,16 @@ namespace TestUtility
 
             if (singletonTypes.Any()) {
                 WriteLine($"SingletonMonoBehaviour<T>派生");
-                foreach (var t in singletonTypes) {
-                    WriteLine($"{t.Name}");
+                WriteLine("");
+                WriteLine($"| 名前空間 | クラス     |       |  ");
+                WriteLine($"|----------|------------|-------|  ");
+
+                foreach (var g in singletonTypes.GroupBy(t => t.Namespace)) {
+                    WriteLine($"| {g.Key} |         |           |  ");
+                    foreach (var t in g) {
+                        WriteLine($"{t.Name}");
+                        WriteLine($"| {t.Namespace} | {t.Name} |    | ");
+                    }
                 }
             }
         }

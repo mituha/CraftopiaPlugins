@@ -77,13 +77,13 @@ namespace TestUtility
         /// </summary>
         /// <param name="types"></param>
         protected void OutputTable(Type[] types) {
-            WriteLine($"| クラス     | 基本クラス   |       |  ");
-            WriteLine($"|------------|--------------|-------|  ");
+            WriteLine($"| 名前空間 | クラス     | 基本クラス   |       |  ");
+            WriteLine($"|----------|------------|--------------|-------|  ");
 
             foreach (var t in types) {
                 string opt = t.IsAbstract ? "abstract" : "";
                 //表としては基本クラスは異なる場合のみ表示
-                WriteLine($"| {t.Name}  | {((t.BaseType != this.BaseType) ? t.BaseType?.Name : "")}    | {opt}  |  ");
+                WriteLine($"| {t.Namespace} | {t.Name}  | {((t.BaseType != this.BaseType) ? t.BaseType?.Name : "")}    | {opt}  |  ");
             }
         }
 

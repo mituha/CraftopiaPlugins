@@ -13,4 +13,5 @@
     + [OcEm](OcEm.md)
 * [OcActState](OcActState.md)
     + [OcActState_Pl](OcActState_Pl.md)
+* [OcInstallObj](OcInstallObj.md)
 * [シーン関連](Scenes.md)  

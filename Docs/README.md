@@ -8,10 +8,13 @@
 クラス図を画像で書き出したい場合はオンラインのサイト等を使用できます。
 
 * [SingletonMonoBehaviour<T>派生クラス](SingletonMonoBehaviour.md)  
+    + [OcInstallObjMng](OcInstallObjMng.md)
 * [OcCharacter](OcCharacter.md)
     + [OcPl](OcPl.md)
     + [OcEm](OcEm.md)
 * [OcActState](OcActState.md)
     + [OcActState_Pl](OcActState_Pl.md)
 * [OcInstallObj](OcInstallObj.md)
+    + [OcBuildingBase](OcBuildingBase.md)
+    + [OcBldg_FarmBase](OcBldg_FarmBase.md)
 * [シーン関連](Scenes.md)  

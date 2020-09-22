@@ -15,4 +15,12 @@ namespace TestUtility
     {
         public EnumerateOcInstallObjCommand() : base(typeof(OcInstallObj)) { }
     }
+    internal class EnumerateOcBuildingBaseCommand : CreateClassDiagramCommand
+    {
+        public EnumerateOcBuildingBaseCommand() : base(typeof(OcBuildingBase)) { }
+    }
+    internal class EnumerateOcBldgFarmBaseCommand : CreateClassDiagramCommand
+    {
+        public EnumerateOcBldgFarmBaseCommand() : base(typeof(OcBldg_FarmBase)) { }
+    }
 }

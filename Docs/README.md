@@ -12,6 +12,7 @@
     + [OcDropItemMng](OcDropItemMng.md)
     + [OcUI_MapHandler](OcUI_MapHandler.md)
     + [OcInputTrack](OcInputTrack.md)
+    + [OcSkillManager](OcSkillManager.md)
 * [OcCharacter](OcCharacter.md)
     + [OcPl](OcPl.md)
     + [OcEm](OcEm.md)

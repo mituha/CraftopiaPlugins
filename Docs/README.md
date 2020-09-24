@@ -11,6 +11,7 @@
     + [OcInstallObjMng](OcInstallObjMng.md)
     + [OcDropItemMng](OcDropItemMng.md)
     + [OcUI_MapHandler](OcUI_MapHandler.md)
+    * [OcMapMarkerMng](OcMapMarkerMng.md)
     + [OcInputTrack](OcInputTrack.md)
     + [OcSkillManager](OcSkillManager.md)
 * [OcCharacter](OcCharacter.md)

@@ -29,6 +29,7 @@ namespace ReSTAR.Craftopia.Plugin
             AddCommand("list", "*", GetList);
             AddCommand("unity", "*", ExecuteUnityCommand);
             AddCommand("ui", "*", ExecuteUICommand);
+            AddCommand("map", "*", ExecuteMapCommand);
         }
 
         private readonly SceneChecker _SceneChecker = new SceneChecker();
@@ -302,5 +303,24 @@ namespace ReSTAR.Craftopia.Plugin
 
             return handled;
         }
+
+
+        private bool ExecuteMapCommand(string command, string subCommand, string[] parameters) {
+            UnityEngine.Debug.Log($"{command} {subCommand}");
+            subCommand = subCommand.ToLower();  //小文字として比較
+            bool handled = true;
+
+            //プレーヤーの座標の取得
+            //  現状、足元になる？
+            var instPl = OcPlMng.Inst;
+            if (instPl != null) {
+                var pos = instPl.getPlPos(0);
+                if (pos != null) {
+                    SingletonMonoBehaviour<OcMapMarkerMng>.Inst.useMarker_ForPlMaster(pos.Value);
+                }
+            }
+            return handled;
+        }
+
     }
 }

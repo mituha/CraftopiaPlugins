@@ -22,5 +22,6 @@
 * [OcInstallObj](OcInstallObj.md)
     + [OcBuildingBase](OcBuildingBase.md)
     + [OcBldg_FarmBase](OcBldg_FarmBase.md)
+* [OcGimmick](OcGimmick.md)
 * [シーン関連](Scenes.md)  
 * [Tips](Tips.md)  

@@ -3,6 +3,18 @@ Tips
 
 小ネタ的なメモ
 
+## バージョン
+```
+[Info   : Unity Log] ApplicationVersion = 20200924.0334
+[Info   : Unity Log] VersionInt=9240334
+```
+`Application.Version` は `string` で `20200924.0334` のような値。  
+`OcAllSceneShareSingleton.Inst.Version` は `int` で `9240334` のような値
+
+
+
+
+
 ## 列挙型の `Max`  
 ```
 public enum PoolType : byte

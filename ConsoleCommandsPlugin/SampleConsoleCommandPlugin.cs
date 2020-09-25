@@ -198,6 +198,13 @@ namespace ReSTAR.Craftopia.Plugin
                     UnityEngine.Debug.Log($"{i} : {scene.name}");
                     values.Add($"{i} : {scene.name}");
                 }
+            }else if(subCommand == "gimmick") {
+                //釣り場、宝箱等のギミック列挙
+                Func<OcGimmick, bool> predicate = g => true;    //全列挙
+
+                foreach(var gimmick in OcGimmickMng.Inst.SearchGimmicks(predicate)) {
+                    values.Add($"[{gimmick.GetType().Name}]{gimmick.name}({gimmick.PosHash}) {gimmick.transform.position}");
+                }
             } else {
                 values.AddRange(objs.Select(o => o.name).ToArray());
             }

@@ -255,6 +255,16 @@ namespace ReSTAR.Craftopia.Plugin
                 foreach (var info in infos) {
                     UnityEngine.Debug.Log(info);
                 }
+            }else if(subCommand == "player") {
+                //Playerの構造確認
+                var pl = OcPlMng.Inst.getPl(0);
+
+                UnityEngine.Debug.Log($"{pl.name}.gameObject.scene.name = {pl.gameObject.scene.name}");
+                UnityEngine.Debug.Log($"\tpath : {pl.gameObject.scene.path}");
+
+                var infos = EnumerateObject(pl.gameObject, "");
+                string message = string.Join(Environment.NewLine, infos);
+                PopMessage(message);
             } else {
                 handled = false;
             }
@@ -373,9 +383,17 @@ namespace ReSTAR.Craftopia.Plugin
                 //TODO プレーヤーのみ切り抜く方法？
                 //cam.clearFlags = CameraClearFlags.Depth;
                 //よくあるカメラコントロール用のスクリプトに変更すれば良い
-                var sc = cam.gameObject.AddComponent<PlayerCamera>();
+                var sc = cam.gameObject.AddComponent<LookAtPlayerCamera>();
                 //左真ん中あたりに表示
                 cam.rect = new Rect(0.75f, 0.4f, 0.2f, 0.2f);
+            } else if (subCommand == "hip") {
+                var cam = GetOrCreateCamera("TestHipCamera01");
+                var sc = cam.gameObject.AddComponent<LookAtPlayerCamera>();
+                sc.Target = HumanBodyBones.Hips;
+                sc.Target2 = null;
+
+                //左真ん中あたりに表示
+                cam.rect = new Rect(0.75f, 0.2f, 0.2f, 0.2f);
             } else if (subCommand == "treasure") {
                 //宝探し
 

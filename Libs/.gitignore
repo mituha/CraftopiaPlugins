@@ -25,3 +25,5 @@ UnityEngine.UIModule.dll
 UnityEngine.TextRenderingModule.dll
 # Rigidbody
 UnityEngine.PhysicsModule.dll
+# Animator
+UnityEngine.AnimationModule.dll

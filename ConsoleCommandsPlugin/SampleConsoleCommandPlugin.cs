@@ -386,14 +386,31 @@ namespace ReSTAR.Craftopia.Plugin
                 var sc = cam.gameObject.AddComponent<LookAtPlayerCamera>();
                 //左真ん中あたりに表示
                 cam.rect = new Rect(0.75f, 0.4f, 0.19f, 0.19f);
-            } else if (subCommand == "hip") {
-                var cam = GetOrCreateCamera("TestHipCamera01");
+            } else if (subCommand == "hips") {
+                var cam = GetOrCreateCamera("TestHipsCamera01");
                 var sc = cam.gameObject.AddComponent<LookAtPlayerCamera>();
                 sc.Target = HumanBodyBones.Hips;
                 sc.Target2 = null;
 
                 //左真ん中あたりに表示
                 cam.rect = new Rect(0.75f, 0.2f, 0.19f, 0.19f);
+
+                if (parameters.Length >= 1 && parameters[0] == "low") {
+                    float[] rates = new float[] { 0.75f, 0.50f, 0.25f };
+                    int number = 2;
+                    foreach (var rate in rates) {
+                        string name = $"TestHipsCamera{number:d2}";
+                        cam = GetOrCreateCamera(name);
+                        sc = cam.gameObject.AddComponent<LookAtPlayerCamera>();
+                        sc.Target = HumanBodyBones.Hips;
+                        sc.Target2 = null;
+                        sc.YRate = rate;
+
+                        cam.rect = new Rect((float)(number - 1) * 0.2f, 0.75f, 0.19f, 0.19f);
+
+                        number++;
+                    }
+                }
             } else if (subCommand == "treasure") {
                 //宝探し
 

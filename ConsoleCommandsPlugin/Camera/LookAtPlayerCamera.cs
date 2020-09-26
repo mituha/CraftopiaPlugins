@@ -1,4 +1,5 @@
 ﻿using Oc;
+using SR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,16 @@ namespace ReSTAR.Craftopia.Plugin
 
         private Transform _TargetTransform;
         private Transform _Target2Transform;
+
+        /// <summary>
+        /// カメラ配置オフセット
+        /// </summary>
+        public Vector3 Offset = new Vector3(0, 0, 0);
+
+        /// <summary>
+        /// 高さ変更割合
+        /// </summary>
+        public float YRate = 1.0f;
 
         void Start() {
             if (this.player == null) {
@@ -69,13 +80,20 @@ namespace ReSTAR.Craftopia.Plugin
                 //      横からとか Func<Transform,Vector3>?
                 v = t.forward * -1;
             }
-            var p = _TargetTransform.position;
+            var posTarget = _TargetTransform.position;
             if (_Target2Transform != null) {
                 //右目と左目を指定の場合等
-                p = (p + _Target2Transform.position) / 2;
+                posTarget = (posTarget + _Target2Transform.position) / 2;
             }
-            this.transform.position = p + v * this.Distance;
-            this.transform.LookAt(p);
+            //通常、注視点と同じ高さで離れた位置
+            //YRateにより、地面からの割合でYの変更し、地面に埋まりづらいように調整
+            float y = t.position.y + (posTarget.y - t.position.y) * this.YRate;
+            var posCamera = posTarget + v * this.Distance;
+            posCamera.y = y;
+
+            //オフセットを加えてカメラ位置とする
+            this.transform.position = posCamera + this.Offset;
+            this.transform.LookAt(posTarget);
         }
     }
 }

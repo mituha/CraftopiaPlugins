@@ -402,7 +402,7 @@ namespace ReSTAR.Craftopia.Plugin
                 var p0 = OcPlMng.Inst.getPl(0).gameObject.transform.position;
                 Func<OcGimmick, bool> predicate = g => g is OcGimmick_TreasureBox;    //宝箱
 
-                int count = 4;
+                int count = 3;
                 int number = 1;
                 bool pinned = false;
                 foreach (var gimmick in OcGimmickMng.Inst.SearchGimmicks(predicate).OrderBy(g => Vector3.Distance(g.gameObject.transform.position, p0)).Take(count)) {

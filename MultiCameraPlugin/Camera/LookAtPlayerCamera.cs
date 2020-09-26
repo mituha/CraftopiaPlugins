@@ -48,12 +48,13 @@ namespace ReSTAR.Craftopia.Plugin
                 //OcPl想定
                 a = player.GetComponent<OcPl>().Animator;
             }
-
+#if false
             //ボーン有無確認
             foreach (var bone in Enum.GetValues(typeof(HumanBodyBones)).OfType<HumanBodyBones>().Where(b => b != HumanBodyBones.LastBone)) {
                 var t = a.GetBoneTransform(bone);
                 UnityEngine.Debug.Log($"{bone} : {t?.position} : {t?.forward} / {t?.up} / {t?.right}");
             }
+#endif
 
             if (this.Target != null) {
                 _TargetTransform = a.GetBoneTransform(this.Target.Value);

@@ -18,6 +18,17 @@ namespace ReSTAR.Craftopia.Plugin
             //使用するコマンドの登録
             AddCommand("camera", "*", ExecuteCameraCommand);
         }
+        void Awake() {
+            //出力を確認するには、BepInEx.cfg の設定変更が必要
+            //[Logging]
+            //  LogConsoleToUnityLog = true
+            //[Logging.Console]
+            //  Enabled = true
+            UnityEngine.Debug.Log($"{this.GetType().Name} Awake");
+
+            //Harmonyのパッチを使用するため呼び出し
+            PatchAll();
+        }
 
         private bool ExecuteCameraCommand(string command, string subCommand, string[] parameters) {
             UnityEngine.Debug.Log($"{command} {subCommand}");

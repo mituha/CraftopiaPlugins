@@ -21,9 +21,15 @@ BepInExを利用しています。
 ### HellowWorldPlugin
 Hello world!
 
+### MultiCameraPlugin
+複数カメラ表示サンプル
+
+### TestHermony
+
 ### TestPlugin
 適当に実験用
 
+### TestUtility
 
 ## プラグインの取っ掛かり
 [技術資料](./Docs/README.md)  

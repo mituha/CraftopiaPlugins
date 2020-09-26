@@ -30,7 +30,7 @@ namespace ReSTAR.Craftopia.Plugin
             AddCommand("unity", "*", ExecuteUnityCommand);
             AddCommand("ui", "*", ExecuteUICommand);
             AddCommand("map", "*", ExecuteMapCommand);
-            AddCommand("camera", "*", ExecuteCameraCommand);
+            //AddCommand("camera", "*", ExecuteCameraCommand);
         }
 
         private readonly SceneChecker _SceneChecker = new SceneChecker();

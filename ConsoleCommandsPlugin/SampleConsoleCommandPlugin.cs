@@ -376,6 +376,35 @@ namespace ReSTAR.Craftopia.Plugin
                 var sc = cam.gameObject.AddComponent<PlayerCamera>();
                 //左真ん中あたりに表示
                 cam.rect = new Rect(0.75f, 0.4f, 0.2f, 0.2f);
+            } else if (subCommand == "treasure") {
+                //宝探し
+
+                //OcGimmick_TreasureBox
+                //TODO 近いやつとか
+                var p0 = OcPlMng.Inst.getPl(0).gameObject.transform.position;
+                Func<OcGimmick, bool> predicate = g => g is OcGimmick_TreasureBox;    //宝箱
+
+                int count = 4;
+                int number = 1;
+                bool pinned = false;
+                foreach (var gimmick in OcGimmickMng.Inst.SearchGimmicks(predicate).OrderBy(g => Vector3.Distance(g.gameObject.transform.position, p0)).Take(count)) {
+                    string name = $"TestGimmickCamera{number:d2}";
+                    var cam = GetOrCreateCamera(name);
+                    //追従不要なので直接位置調整
+                    var t = gimmick.transform;
+
+                    //割と離さないと周囲が見れない
+                    cam.transform.position = t.position + t.forward * 2.0f + t.up * 2.0f;
+                    cam.transform.LookAt(t);
+
+                    cam.rect = new Rect(number * 0.2f, 0.75f, 0.19f, 0.19f);
+
+                    if (!pinned) {
+                        UnityEngine.Debug.Log($"{gimmick.name}[{t}] : {gimmick.GetType().Name}");
+                        SingletonMonoBehaviour<OcMapMarkerMng>.Inst.useMarker_ForPlMaster(t.position);
+                        pinned = true;
+                    }
+                }
             }
 
             if (values.Any()) {

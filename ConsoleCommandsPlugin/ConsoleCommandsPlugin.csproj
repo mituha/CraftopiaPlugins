@@ -36,5 +36,8 @@
      <Reference Include="UnityEngine.AnimationModule">
       <HintPath>..\Libs\UnityEngine.AnimationModule.dll</HintPath>
     </Reference>
+     <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>..\Libs\UnityEngine.AssetBundleModule.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

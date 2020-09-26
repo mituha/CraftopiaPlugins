@@ -27,3 +27,5 @@ UnityEngine.TextRenderingModule.dll
 UnityEngine.PhysicsModule.dll
 # Animator
 UnityEngine.AnimationModule.dll
+# AssetBundle用
+UnityEngine.AssetBundleModule.dll

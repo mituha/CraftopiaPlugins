@@ -5,6 +5,7 @@ using Oc.Item;
 using SR;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -222,6 +223,7 @@ namespace ReSTAR.Craftopia.Plugin
             UnityEngine.Debug.Log($"Unity {subCommand}");
             subCommand = subCommand.ToLower();  //小文字として比較
             bool handled = true;
+            List<string> values = new List<string>();
 
             PrimitiveType? type = null;
             foreach (var t in Enum.GetValues(typeof(PrimitiveType)).OfType<PrimitiveType>()) {
@@ -265,8 +267,52 @@ namespace ReSTAR.Craftopia.Plugin
                 var infos = EnumerateObject(pl.gameObject, "");
                 string message = string.Join(Environment.NewLine, infos);
                 PopMessage(message);
+            } else if (subCommand == "file?") {
+                values.Add($"{this.GetType().Assembly.Location}");
+                string dir = Path.GetDirectoryName(this.GetType().Assembly.Location);
+                values.Add(dir);
+                dir = Path.Combine(dir, "AssetBundles");
+                values.Add(dir);
+                var di = new DirectoryInfo(dir);
+                foreach (var fi in di.GetFiles()) {
+                    values.Add(fi.FullName);
+                }
+            } else if (subCommand == "load") {
+                values.Add($"{this.GetType().Assembly.Location}");
+                string dir = Path.GetDirectoryName(this.GetType().Assembly.Location);
+                values.Add(dir);
+                dir = Path.Combine(dir, "AssetBundles");
+                values.Add(dir);
+                var di = new DirectoryInfo(dir);
+                foreach (var fi in di.GetFiles()) {
+                    values.Add(fi.FullName);
+                }
+                if (parameters.Length >= 1) {
+                    string path = Path.Combine(dir, parameters[0]);
+                    var assetBundle = UnityEngine.AssetBundle.LoadFromFile(path);
+                    if (assetBundle != null) {
+                        var prefab = assetBundle.LoadAsset<GameObject>("TestCapsule");
+                        var o = Instantiate(prefab);
+
+                        var instPl = OcPlMng.Inst;
+                        if (instPl != null) {
+                            var pos = instPl.getPlPos(0);
+                            if (pos != null) {
+                                //TODO 向きは？
+                                o.transform.position = pos.Value + new Vector3(0f, 2.0f, 0f); //頭上に出す
+                            }
+                        }
+                    } else {
+                        values.Add($"読み込みエラー : {path}");
+                    }
+                }
             } else {
                 handled = false;
+            }
+            if (values.Any()) {
+                //改行も有効
+                string message = string.Join(Environment.NewLine, values);
+                PopMessage(message);
             }
 
             return handled;

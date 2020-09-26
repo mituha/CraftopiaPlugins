@@ -255,7 +255,7 @@ namespace ReSTAR.Craftopia.Plugin
                 foreach (var info in infos) {
                     UnityEngine.Debug.Log(info);
                 }
-            }else if(subCommand == "player") {
+            } else if (subCommand == "player") {
                 //Playerの構造確認
                 var pl = OcPlMng.Inst.getPl(0);
 
@@ -385,7 +385,7 @@ namespace ReSTAR.Craftopia.Plugin
                 //よくあるカメラコントロール用のスクリプトに変更すれば良い
                 var sc = cam.gameObject.AddComponent<LookAtPlayerCamera>();
                 //左真ん中あたりに表示
-                cam.rect = new Rect(0.75f, 0.4f, 0.2f, 0.2f);
+                cam.rect = new Rect(0.75f, 0.4f, 0.19f, 0.19f);
             } else if (subCommand == "hip") {
                 var cam = GetOrCreateCamera("TestHipCamera01");
                 var sc = cam.gameObject.AddComponent<LookAtPlayerCamera>();
@@ -393,7 +393,7 @@ namespace ReSTAR.Craftopia.Plugin
                 sc.Target2 = null;
 
                 //左真ん中あたりに表示
-                cam.rect = new Rect(0.75f, 0.2f, 0.2f, 0.2f);
+                cam.rect = new Rect(0.75f, 0.2f, 0.19f, 0.19f);
             } else if (subCommand == "treasure") {
                 //宝探し
 
@@ -407,7 +407,10 @@ namespace ReSTAR.Craftopia.Plugin
                 bool pinned = false;
                 foreach (var gimmick in OcGimmickMng.Inst.SearchGimmicks(predicate).OrderBy(g => Vector3.Distance(g.gameObject.transform.position, p0)).Take(count)) {
                     string name = $"TestGimmickCamera{number:d2}";
+                    UnityEngine.Debug.Log($">> GetOrCreateCamera({name})");
                     var cam = GetOrCreateCamera(name);
+                    UnityEngine.Debug.Log($"<< GetOrCreateCamera({cam.name})");
+
                     //追従不要なので直接位置調整
                     var t = gimmick.transform;
 
@@ -415,13 +418,15 @@ namespace ReSTAR.Craftopia.Plugin
                     cam.transform.position = t.position + t.forward * 2.0f + t.up * 2.0f;
                     cam.transform.LookAt(t);
 
-                    cam.rect = new Rect(number * 0.2f, 0.75f, 0.19f, 0.19f);
+                    cam.rect = new Rect((float)number * 0.2f, 0.75f, 0.19f, 0.19f);
 
                     if (!pinned) {
                         UnityEngine.Debug.Log($"{gimmick.name}[{t}] : {gimmick.GetType().Name}");
                         SingletonMonoBehaviour<OcMapMarkerMng>.Inst.useMarker_ForPlMaster(t.position);
                         pinned = true;
                     }
+
+                    number++;
                 }
             }
 

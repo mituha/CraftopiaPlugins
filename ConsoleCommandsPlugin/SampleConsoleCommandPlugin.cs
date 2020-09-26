@@ -344,12 +344,12 @@ namespace ReSTAR.Craftopia.Plugin
                 foreach (var cam in Camera.allCameras) {
                     values.AddRange(GetCameraInformation(cam));
                 }
-            }else if(subCommand == "add") {
+            } else if (subCommand == "add") {
                 var mainCam = Camera.main;
 
                 string name = "TestCamera01";
                 var cam = Camera.allCameras.FirstOrDefault(c => c.name == name);
-                if(cam == null) {
+                if (cam == null) {
                     cam = new GameObject().AddComponent<Camera>();
                     cam.name = name;
 #if false
@@ -368,6 +368,14 @@ namespace ReSTAR.Craftopia.Plugin
                     cam.rect = new Rect(0.6f, 0.6f, 0.25f, 0.25f);
                     cam.depth = mainCam.depth + 1;
                 }
+            } else if (subCommand == "player") {
+                var cam = GetOrCreateCamera("TestFaceCamera01");
+                //TODO プレーヤーのみ切り抜く方法？
+                //cam.clearFlags = CameraClearFlags.Depth;
+                //よくあるカメラコントロール用のスクリプトに変更すれば良い
+                var sc = cam.gameObject.AddComponent<PlayerCamera>();
+                //左真ん中あたりに表示
+                cam.rect = new Rect(0.75f, 0.4f, 0.2f, 0.2f);
             }
 
             if (values.Any()) {
@@ -377,6 +385,36 @@ namespace ReSTAR.Craftopia.Plugin
             }
             return handled;
         }
+        private Camera GetOrCreateCamera(string name) {
+            var mainCam = Camera.main;
+
+            var cam = Camera.allCameras.FirstOrDefault(c => c.name == name);
+            if (cam == null) {
+                cam = new GameObject().AddComponent<Camera>();
+                cam.name = name;
+#if false
+                    UnityEngine.Debug.Log($"{mainCam.name}.gameObject.scene.name = {mainCam.gameObject.scene.name}");
+                    UnityEngine.Debug.Log($"\tpath : {mainCam.gameObject.scene.path}");
+                    UnityEngine.Debug.Log($"\tIsValid : {mainCam.gameObject.scene.IsValid()}");
+#endif
+                SceneManager.MoveGameObjectToScene(cam.gameObject, mainCam.gameObject.scene);
+
+                //TODO プレーヤーに追従させる方法
+                //TODO メインカメラの下に配置した方が楽なのでは？
+
+                cam.transform.SetParent(mainCam.transform.parent);
+                cam.transform.position = mainCam.transform.position;
+
+                //TODO  作成後、再設定すること
+                //  カメラの表示を行う位置。左下基準の 0.0-1.0 の割合での設定
+                cam.rect = new Rect(0.6f, 0.6f, 0.25f, 0.25f);
+
+                //depthの大きい順に前に表示される
+                cam.depth = mainCam.depth + 1;
+            }
+            return cam;
+        }
+
         private string[] GetCameraInformation(Camera cam) {
             List<string> values = new List<string>();
             values.Add($"{cam.name} : {cam.GetType().Name} : [{cam.GetHashCode()}]");

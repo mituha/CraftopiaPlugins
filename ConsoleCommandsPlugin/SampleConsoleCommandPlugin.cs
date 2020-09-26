@@ -30,6 +30,7 @@ namespace ReSTAR.Craftopia.Plugin
             AddCommand("unity", "*", ExecuteUnityCommand);
             AddCommand("ui", "*", ExecuteUICommand);
             AddCommand("map", "*", ExecuteMapCommand);
+            AddCommand("camera", "*", ExecuteCameraCommand);
         }
 
         private readonly SceneChecker _SceneChecker = new SceneChecker();
@@ -198,11 +199,11 @@ namespace ReSTAR.Craftopia.Plugin
                     UnityEngine.Debug.Log($"{i} : {scene.name}");
                     values.Add($"{i} : {scene.name}");
                 }
-            }else if(subCommand == "gimmick") {
+            } else if (subCommand == "gimmick") {
                 //釣り場、宝箱等のギミック列挙
                 Func<OcGimmick, bool> predicate = g => true;    //全列挙
 
-                foreach(var gimmick in OcGimmickMng.Inst.SearchGimmicks(predicate)) {
+                foreach (var gimmick in OcGimmickMng.Inst.SearchGimmicks(predicate)) {
                     values.Add($"[{gimmick.GetType().Name}]{gimmick.name}({gimmick.PosHash}) {gimmick.transform.position}");
                 }
             } else {
@@ -329,5 +330,71 @@ namespace ReSTAR.Craftopia.Plugin
             return handled;
         }
 
+        private bool ExecuteCameraCommand(string command, string subCommand, string[] parameters) {
+            UnityEngine.Debug.Log($"{command} {subCommand}");
+            subCommand = subCommand.ToLower();  //小文字として比較
+            bool handled = true;
+            List<string> values = new List<string>();
+
+            if (subCommand == "main") {
+                //カメラ情報の確認
+                var cam = Camera.main;
+                values.AddRange(GetCameraInformation(cam));
+            } else if (subCommand == "list") {
+                foreach (var cam in Camera.allCameras) {
+                    values.AddRange(GetCameraInformation(cam));
+                }
+            }else if(subCommand == "add") {
+                var mainCam = Camera.main;
+
+                string name = "TestCamera01";
+                var cam = Camera.allCameras.FirstOrDefault(c => c.name == name);
+                if(cam == null) {
+                    cam = new GameObject().AddComponent<Camera>();
+                    cam.name = name;
+#if false
+                    UnityEngine.Debug.Log($"{mainCam.name}.gameObject.scene.name = {mainCam.gameObject.scene.name}");
+                    UnityEngine.Debug.Log($"\tpath : {mainCam.gameObject.scene.path}");
+                    UnityEngine.Debug.Log($"\tIsValid : {mainCam.gameObject.scene.IsValid()}");
+#endif
+                    SceneManager.MoveGameObjectToScene(cam.gameObject, mainCam.gameObject.scene);
+
+                    //TODO プレーヤーに追従させる方法
+                    //TODO メインカメラの下に配置した方が楽なのでは？
+
+                    cam.transform.SetParent(mainCam.transform.parent);
+                    cam.transform.position = mainCam.transform.position;
+
+                    cam.rect = new Rect(0.6f, 0.6f, 0.25f, 0.25f);
+                    cam.depth = mainCam.depth + 1;
+                }
+            }
+
+            if (values.Any()) {
+                //改行も有効
+                string message = string.Join(Environment.NewLine, values);
+                PopMessage(message);
+            }
+            return handled;
+        }
+        private string[] GetCameraInformation(Camera cam) {
+            List<string> values = new List<string>();
+            values.Add($"{cam.name} : {cam.GetType().Name} : [{cam.GetHashCode()}]");
+            values.Add($"\tScene : {cam.gameObject.scene.name}");
+            values.Add($"\tposition : {cam.transform.position}");
+            values.Add($"\tenabled : {cam.enabled}");
+            values.Add($"\tdepth : {cam.depth}");
+            foreach (var c in cam.GetComponents<Component>()) {
+                values.Add($"\t -({c.name}) : {c.GetType().Name} : [{c.GetHashCode()}]");
+#if false
+                if (c == cam) {
+                        values.Add($"\t\t同一");
+                    }
+#endif
+            }
+            //階層確認
+            values.Add($"\tparent : {cam.transform.parent?.gameObject?.name}");
+            return values.ToArray();
+        }
     }
 }

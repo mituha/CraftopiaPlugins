@@ -111,7 +111,13 @@ namespace ReSTAR.Craftopia.Plugin
             public bool HasSubCommand => !string.IsNullOrEmpty(this.SubCmd);
 
             public bool IsMatch(string cmd) {
-                return string.Compare(this.Cmd, cmd, true) == 0;
+                if (string.Compare(this.Cmd, cmd, true) == 0) { return true; }
+                //コマンド登録の指定で、 hoge* のような末尾 * はワイルドカード的に先頭のみのチェック
+                var wildCmd = this.Cmd.TrimEnd('*');
+                if (wildCmd == this.Cmd) {
+                    return false;
+                }
+                return cmd.ToLower().IndexOf(wildCmd.ToLower()) == 0;
             }
             public bool IsMatch(string cmd, string subCmd) {
                 if (!this.HasSubCommand) { return false; }

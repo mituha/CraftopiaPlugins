@@ -218,13 +218,20 @@ namespace ReSTAR.Craftopia.Plugin
                     sc.SetTarget(target.Value, target2, position);
                 } else if (subCommand == "add" || subCommand == "new") {
                     var cam = this.Manager.GetOrCreateCamera(cameraNumber);
-                } else if (subCommand == "treasure") {
+                } else if (subCommand == "treasure" || subCommand == "fish") {
                     //宝探し
+                    //TODO 宝に世界遺産の断片は含めるべきか
 
                     //OcGimmick_TreasureBox
                     //TODO 近いやつとか
                     var p0 = OcPlMng.Inst.getPl(0).gameObject.transform.position;
                     Func<OcGimmick, bool> predicate = g => g is OcGimmick_TreasureBox;    //宝箱
+                    if (subCommand == "fish") {
+                        predicate = g => g is OcGimmick_FishingPoint;    //釣り場
+                        //OcGimmick_WorldHeritageFragment   //世界遺産の断片
+                        //OcGimmick_DoorEmKillCount //?
+                    }
+
 
                     int count = 1;  //TODO コマンドの変更
                     int number = 1;

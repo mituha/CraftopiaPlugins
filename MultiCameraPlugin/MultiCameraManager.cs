@@ -64,6 +64,10 @@ namespace ReSTAR.Craftopia.Plugin
                     _Cameras.Add(mc);
                 }
                 var camera = mc?.gameObject.GetComponent<Camera>();
+                if (camera != null && create) {
+                    //作成前提の呼び出し時、わかりやすくなるように表示も戻す
+                    SetVisible(camera, true);
+                }
                 return camera;
             }
         }
@@ -73,8 +77,7 @@ namespace ReSTAR.Craftopia.Plugin
 
 
         public T GetOrAddControlComponent<T>(Camera camera) where T : Component {
-            var obj = camera.gameObject;
-            T c = obj.GetComponent<T>();
+            T c = GetComponent<T>(camera);
             if (c == null) {
                 //同系統の制御用のコンポーネントの除外
                 RemoveControlComponents(camera);
@@ -89,8 +92,13 @@ namespace ReSTAR.Craftopia.Plugin
             obj.RemoveComponentIfExists<LookAtPlayerCamera>();
         }
 
+        public T GetComponent<T>(Camera camera) where T : Component {
+            var obj = camera?.gameObject;
+            T c = obj?.GetComponent<T>();
+            return c;
+        }
         internal MultiCamera GetMultiCamera(Camera camera) {
-            return camera.gameObject.GetComponent<MultiCamera>();
+            return GetComponent<MultiCamera>(camera);
         }
 
         internal MultiCamera[] GetMultiCameras(params int[] numbers) {
@@ -192,5 +200,29 @@ namespace ReSTAR.Craftopia.Plugin
         }
 
         #endregion
+
+        #region 表示変更
+
+        public void SetVisible(Camera camera, bool visible) {
+            if (camera == null) { return; }
+            camera.enabled = visible;
+        }
+
+        #endregion
+
+        public void SetDistance(Camera camera, float distance) {
+            if (camera == null) { return; }
+            var sc = GetComponent<LookAtPlayerCamera>(camera);
+            if (sc != null) {
+                sc.Distance = distance;
+            }
+        }
+        public void SetAngle(Camera camera, float rate) {
+            if (camera == null) { return; }
+            var sc = GetComponent<LookAtPlayerCamera>(camera);
+            if (sc != null) {
+                sc.YRate = rate;
+            }
+        }
     }
 }

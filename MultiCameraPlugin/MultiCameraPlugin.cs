@@ -75,6 +75,10 @@ namespace ReSTAR.Craftopia.Plugin
                     cameraNumbers = this.Manager.GetCameraNumbers();
                 } else if (subCommand == "reset" && parameters.Length == 0) {
                     cameraNumbers = this.Manager.GetCameraNumbers();
+                } else if (subCommand == "off" || subCommand == "on") {
+                    cameraNumbers = this.Manager.GetCameraNumbers();
+                } else if (subCommand == "distance" || subCommand == "angle") {
+                    cameraNumbers = this.Manager.GetCameraNumbers();
                 }
             };
 
@@ -137,6 +141,37 @@ namespace ReSTAR.Craftopia.Plugin
                     foreach (var cam in this.Manager.GetCameras(cameraNumbers)) {
                         this.Manager.ResetViewRect(cam, targetNumber);
                     }
+                } else if (subCommand == "off" || subCommand == "on") {
+                    bool visible = subCommand != "off";
+                    foreach (var cam in this.Manager.GetCameras(cameraNumbers)) {
+                        this.Manager.SetVisible(cam, visible);
+                    }
+                } else if (subCommand == "distance") {
+                    float? distance = null;
+                    if (parameters.Length >= 1) {
+                        float value;
+                        if (float.TryParse(parameters[0], out value)) {
+                            distance = value;
+                        }
+                    }
+                    if (distance != null) {
+                        foreach (var cam in this.Manager.GetCameras(cameraNumbers)) {
+                            this.Manager.SetDistance(cam, distance.Value);
+                        }
+                    }
+                } else if (subCommand == "angle") {
+                    float? rate = null;
+                    if (parameters.Length >= 1) {
+                        float value;
+                        if (float.TryParse(parameters[0], out value)) {
+                            rate = value;
+                        }
+                    }
+                    if (rate != null) {
+                        foreach (var cam in this.Manager.GetCameras(cameraNumbers)) {
+                            this.Manager.SetAngle(cam, rate.Value);
+                        }
+                    }
                 }
 
                 if (subCommand == "add") {
@@ -152,24 +187,14 @@ namespace ReSTAR.Craftopia.Plugin
                     var sc = this.Manager.GetOrAddControlComponent<LookAtPlayerCamera>(cam);
                     sc.Target = HumanBodyBones.Hips;
                     sc.Target2 = null;
-#if false
-                if (parameters.Length >= 1 && parameters[0] == "low") {
-                    float[] rates = new float[] { 0.75f, 0.50f, 0.25f };
-                    int number = 2;
-                    foreach (var rate in rates) {
-                        string name = $"TestHipsCamera{number:d2}";
-                        cam = GetOrCreateCamera(name);
-                        sc = cam.gameObject.AddComponent<LookAtPlayerCamera>();
-                        sc.Target = HumanBodyBones.Hips;
-                        sc.Target2 = null;
-                        sc.YRate = rate;
 
-                        cam.rect = new Rect((float)(number - 1) * 0.2f, 0.75f, 0.19f, 0.19f);
-
-                        number++;
+                    //視点変更のテスト
+                    if (parameters.Length >= 1) {
+                        float yRate;
+                        if (float.TryParse(parameters[0], out yRate)) {
+                            sc.YRate = yRate;
+                        }
                     }
-                }
-#endif
                 } else if (subCommand == "treasure") {
                     //宝探し
 

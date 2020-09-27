@@ -49,8 +49,19 @@
 * `/camera[1-9] player`
 	+ 正面からの顔表示
 	+ //TODO 名称変更
+* `/camera[1-9] player muki`
+	+ 指定方向からの顔表示
+	+ //TODO 名称変更
+	+ muki
+		+ forward
+		+ back
+		+ up
+		+ down
+		+ right
+		+ left
 * `/camera[1-9] hips`
 	+ 後ろからの尻表示
+	+ その他、ボーン名に準拠して各部の表示
 * `/camera[1-9] treasure`
 	+ 近くの宝箱表示
 
@@ -76,6 +87,15 @@
 		+ デフォルトの高さに対して指定した割合の高さにカメラを配置します
 		+ 1.0より小さい場合はローアングル
 		+ 現状、プレイヤー追随用のカメラで有効
+* `/camera[1-9] position muki`
+	+ 指定方向からのプレイヤー表示
+	+ muki
+		+ forward
+		+ back
+		+ up
+		+ down
+		+ right
+		+ left
 
 #### 配置調整系
 作成済みのカメラ表示の位置等を調整します。

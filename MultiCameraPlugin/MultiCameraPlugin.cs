@@ -12,7 +12,7 @@ namespace ReSTAR.Craftopia.Plugin
     /// <summary>
     /// 
     /// </summary>
-    [BepInPlugin("me.mituha.craftopia.plugins.multicameraplugin", "Multiple cameras plugin sample", "0.2.0.0")]
+    [BepInPlugin("me.mituha.craftopia.plugins.multicameraplugin", "Multiple cameras plugin sample", "0.3.0.0")]
     public class MultiCameraPlugin : ConsoleCommandPlugin
     {
         public MultiCameraPlugin() {
@@ -90,6 +90,11 @@ namespace ReSTAR.Craftopia.Plugin
                 if (!isMulti) {
                     cameraNumbers = new int[] { cameraNumber };
                 }
+
+                //プレイヤーをターゲットとする場合
+                HumanBodyBones? target = null;
+                HumanBodyBones? target2 = null;
+
                 if (subCommand == "size") {
                     //width,height
                     if (parameters.Length >= 2) {
@@ -110,8 +115,19 @@ namespace ReSTAR.Craftopia.Plugin
                         parseError = true;
                     }
                 } else if (subCommand == "pos" || subCommand == "position") {
-                    //x,y
-                    if (parameters.Length >= 2) {
+                    LookAtPlayerCamera.CameraPosition? position = null;
+                    if (parameters.Length >= 1) {
+                        //向き指定
+                        LookAtPlayerCamera.CameraPosition value;
+                        if (LookAtPlayerCamera.TryParseCameraPosition(parameters[0], out value)) {
+                            position = value;
+                        }
+                    }
+                    if (position != null) {
+                        foreach (var cam in this.Manager.GetCameras(cameraNumbers)) {
+                            this.Manager.SetCameraPosition(cam, position);
+                        }
+                    } else if (parameters.Length >= 2) {
                         float x, y;
                         if (float.TryParse(parameters[0], out x) && float.TryParse(parameters[1], out y)) {
                             if (0 <= x && x < 1.0f
@@ -172,29 +188,36 @@ namespace ReSTAR.Craftopia.Plugin
                             this.Manager.SetAngle(cam, rate.Value);
                         }
                     }
+                } else {
+                    //プレイヤーをターゲットとするか
+                    if (subCommand == "player" || subCommand == "face") {
+                        //現状、eyeがないため、暫定的にhead
+                        target = HumanBodyBones.Head;
+                    } else {
+                        HumanBodyBones bone;
+                        if (LookAtPlayerCamera.TryParseHumanBodyBones(subCommand, out bone)) {
+                            //いづれかの指定
+                            target = bone;
+                        }
+                    }
                 }
-
-                if (subCommand == "add") {
-                    var cam = this.Manager.GetOrCreateCamera(cameraNumber);
-                } else if (subCommand == "player") {
+                if (target != null) {
                     var cam = this.Manager.GetOrCreateCamera(cameraNumber);
                     //TODO プレーヤーのみ切り抜く方法？
                     //cam.clearFlags = CameraClearFlags.Depth;
                     //よくあるカメラコントロール用のスクリプトに変更すれば良い
                     var sc = this.Manager.GetOrAddControlComponent<LookAtPlayerCamera>(cam);
-                } else if (subCommand == "hips") {
-                    var cam = this.Manager.GetOrCreateCamera(cameraNumber);
-                    var sc = this.Manager.GetOrAddControlComponent<LookAtPlayerCamera>(cam);
-                    sc.Target = HumanBodyBones.Hips;
-                    sc.Target2 = null;
 
-                    //視点変更のテスト
+                    LookAtPlayerCamera.CameraPosition? position = null;
                     if (parameters.Length >= 1) {
-                        float yRate;
-                        if (float.TryParse(parameters[0], out yRate)) {
-                            sc.YRate = yRate;
+                        LookAtPlayerCamera.CameraPosition value;
+                        if (LookAtPlayerCamera.TryParseCameraPosition(parameters[0], out value)) {
+                            position = value;
                         }
                     }
+                    sc.SetTarget(target.Value, target2, position);
+                } else if (subCommand == "add" || subCommand == "new") {
+                    var cam = this.Manager.GetOrCreateCamera(cameraNumber);
                 } else if (subCommand == "treasure") {
                     //宝探し
 

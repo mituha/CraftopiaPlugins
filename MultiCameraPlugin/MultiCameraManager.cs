@@ -171,7 +171,6 @@ namespace ReSTAR.Craftopia.Plugin
         #endregion
         #region 配置変更
 
-
         public void ChangeViewPosition(Camera camera, float? x, float? y) {
             ChangeViewRect(camera, x, y, null, null);
         }
@@ -222,6 +221,13 @@ namespace ReSTAR.Craftopia.Plugin
             var sc = GetComponent<LookAtPlayerCamera>(camera);
             if (sc != null) {
                 sc.YRate = rate;
+            }
+        }
+        public void SetCameraPosition(Camera camera, LookAtPlayerCamera.CameraPosition? position) {
+            if (camera == null) { return; }
+            var sc = GetComponent<LookAtPlayerCamera>(camera);
+            if (sc != null) {
+                sc.Position = position;
             }
         }
     }

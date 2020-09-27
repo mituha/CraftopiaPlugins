@@ -19,6 +19,75 @@ namespace ReSTAR.Craftopia.Plugin
         public HumanBodyBones? Target = HumanBodyBones.Head;    // HumanBodyBones.LeftEye;  //目は未定義
         public HumanBodyBones? Target2 = null;   // HumanBodyBones.RightEye;
 
+
+        public void SetTarget(HumanBodyBones target, HumanBodyBones? target2 = null, CameraPosition? position = null) {
+            this.Target = target;
+            this.Target2 = target2;
+
+            if (position == null) {
+                //通常、前から
+                position = CameraPosition.Forward;
+                switch (target) {
+                    case HumanBodyBones.Chest:
+                    case HumanBodyBones.Neck:
+                    case HumanBodyBones.Head:
+                    case HumanBodyBones.Jaw:
+                    case HumanBodyBones.UpperChest:
+                        position = CameraPosition.Forward;
+                        break;
+                    case HumanBodyBones.Hips:
+                    case HumanBodyBones.Spine:
+                        position = CameraPosition.Back;
+                        break;
+                    default:
+                        var s = target.ToString();
+                        if (s.IndexOf("Left") == 0) {
+                            position = CameraPosition.Left;
+                        } else if (s.IndexOf("Right") == 0) {
+                            position = CameraPosition.Right;
+                        }
+                        break;
+                }
+            }
+
+            this.Position = position;
+            _Refresh = true;
+        }
+
+        public static bool TryParseHumanBodyBones(string value, out HumanBodyBones result) {
+            result = HumanBodyBones.Head;
+            foreach (var n in Enum.GetValues(typeof(HumanBodyBones)).OfType<HumanBodyBones>()) {
+                if (string.Compare(value, n.ToString(), true) == 0) {
+                    result = n;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public enum CameraPosition
+        {
+            Forward,
+            Back,
+            Up,
+            Down,
+            Left,
+            Right,
+        }
+        public static bool TryParseCameraPosition(string value, out CameraPosition result) {
+            result = CameraPosition.Forward;
+            foreach (var n in Enum.GetValues(typeof(CameraPosition)).OfType<CameraPosition>()) {
+                if (string.Compare(value, n.ToString(), true) == 0) {
+                    result = n;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public CameraPosition? Position;
+
+
         /// <summary>
         /// カメラまでの距離
         /// </summary>
@@ -38,6 +107,14 @@ namespace ReSTAR.Craftopia.Plugin
         public float YRate = 1.0f;
 
         void Start() {
+            _Refresh = true;
+            UpdateTarget();
+        }
+
+        private bool _Refresh = true;
+        private void UpdateTarget() {
+            if (!_Refresh) { return; }
+
             if (this.player == null) {
                 //TODO 顔の位置を取得できると良い？
                 this.player = OcPlMng.Inst.getPl(0).gameObject;
@@ -65,22 +142,29 @@ namespace ReSTAR.Craftopia.Plugin
             if (_TargetTransform == null && _Target2Transform == null) {
                 _TargetTransform = a.GetBoneTransform(HumanBodyBones.Head);
             }
+
+            _Refresh = false;
         }
 
         // Update is called once per frame
         void Update() {
+            UpdateTarget();
+
             //プレイヤー位置
             var t = player.transform;
 
             //とりあえず、適当にプレーヤーの正面からの表示
             //  個別の注視位置基準ではなく、プレイヤー基準
             Vector3 v = t.forward;
-            if (this.Target == HumanBodyBones.Hips) {
-                //後ろからのテスト
-                //TODO  向きを指定するような方法。
-                //      横からとか Func<Transform,Vector3>?
-                v = t.forward * -1;
+            switch (this.Position ?? CameraPosition.Forward) {
+                case CameraPosition.Forward: v = t.forward; break;
+                case CameraPosition.Back: v = t.forward * -1; break;
+                case CameraPosition.Up: v = t.up; break;
+                case CameraPosition.Down: v = t.up * -1; break;
+                case CameraPosition.Left: v = t.right * -1; break;
+                case CameraPosition.Right: v = t.right; break;
             }
+
             var posTarget = _TargetTransform.position;
             if (_Target2Transform != null) {
                 //右目と左目を指定の場合等

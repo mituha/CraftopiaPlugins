@@ -73,6 +73,8 @@ namespace ReSTAR.Craftopia.Plugin
                     cameraNumbers = this.Manager.GetCameraNumbers();
                 } else if (subCommand == "pos" || subCommand == "position") {
                     cameraNumbers = this.Manager.GetCameraNumbers();
+                } else if (subCommand == "reset" && parameters.Length == 0) {
+                    cameraNumbers = this.Manager.GetCameraNumbers();
                 }
             };
 
@@ -123,6 +125,18 @@ namespace ReSTAR.Craftopia.Plugin
                         parseError = true;
                     }
                     cameraNumbers = this.Manager.GetCameraNumbers();
+                } else if (subCommand == "reset") {
+                    int? targetNumber = null;
+                    if (parameters.Length >= 1) {
+                        int n;
+                        if (int.TryParse(parameters[0], out n)) {
+                            targetNumber = n;
+                        }
+                    }
+                    //引数なしの場合はマルチ可能
+                    foreach (var cam in this.Manager.GetCameras(cameraNumbers)) {
+                        this.Manager.ResetViewRect(cam, targetNumber);
+                    }
                 }
 
                 if (subCommand == "add") {
@@ -133,16 +147,11 @@ namespace ReSTAR.Craftopia.Plugin
                     //cam.clearFlags = CameraClearFlags.Depth;
                     //よくあるカメラコントロール用のスクリプトに変更すれば良い
                     var sc = this.Manager.GetOrAddControlComponent<LookAtPlayerCamera>(cam);
-                    //左真ん中あたりに表示
-                    cam.rect = new Rect(0.75f, 0.4f, 0.19f, 0.19f);
                 } else if (subCommand == "hips") {
                     var cam = this.Manager.GetOrCreateCamera(cameraNumber);
                     var sc = this.Manager.GetOrAddControlComponent<LookAtPlayerCamera>(cam);
                     sc.Target = HumanBodyBones.Hips;
                     sc.Target2 = null;
-
-                    //左真ん中あたりに表示
-                    cam.rect = new Rect(0.75f, 0.2f, 0.19f, 0.19f);
 #if false
                 if (parameters.Length >= 1 && parameters[0] == "low") {
                     float[] rates = new float[] { 0.75f, 0.50f, 0.25f };
@@ -182,8 +191,6 @@ namespace ReSTAR.Craftopia.Plugin
                         //割と離さないと周囲が見れない
                         cam.transform.position = t.position + t.forward * 2.0f + t.up * 2.0f;
                         cam.transform.LookAt(t);
-
-                        cam.rect = new Rect((float)number * 0.2f, 0.75f, 0.19f, 0.19f);
 
                         if (!pinned) {
                             UnityEngine.Debug.Log($"{gimmick.name}[{t}] : {gimmick.GetType().Name}");

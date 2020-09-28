@@ -22,6 +22,11 @@
 なお、以下では、`/camera[1-9]` のように表記しています。  
 使用時は、`/camera3` のように置き換えてください。
 
+`/camera[1-9] treasure (n)` のように、`()` カッコでくくられたパラメーターは省略可能です。
+`/camera2 treasure` のように未指定、もしくは、`/camera2 treasure 2` のようにあパラメーターを追加できます。
+
+
+
 ### 使用例
 ```
 # プレイヤーの顔を表示するカメラの追加
@@ -62,8 +67,34 @@
 * `/camera[1-9] hips`
 	+ 後ろからの尻表示
 	+ その他、ボーン名に準拠して各部の表示
-* `/camera[1-9] treasure`
+
+* `/camera[1-9] treasure (pin) (all) (n)`
 	+ 近くの宝箱表示
+	+ pin : "pin" 時、ピン表示
+	+ all : "all" 時、開いている宝箱も表示
+ 	+ n : 1-
+* `/camera[1-9] fish (pin) (all) (n)`
+	+ 近くの釣り場表示
+	+ pin : "pin" 時、ピン表示
+	+ all : "all" 時、すべて表示
+	+ n : 1-
+* `/camera[1-9] fragment (pin) (n)`
+	+ 近くの世界遺産の断片表示
+	+ pin : "pin" 時、ピン表示
+	+ all : "all" 時、すべて表示
+	+ n : 1-
+* `/camera[1-9] door (pin) (n)`
+	+ 近くのキルカウントする扉表示
+	+ pin : "pin" 時、ピン表示
+	+ all : "all" 時、すべて表示
+	+ n : 1-
+* `/camera[1-9] pickup (pin) (n)`
+	+ 近くの？表示
+	+ pin : "pin" 時、ピン表示
+	+ all : "all" 時、すべて表示
+	+ n : 1-
+
+
 
 //TODO
 

@@ -6,6 +6,8 @@ OcEm
 大本は、[OcCharacter](OcCharacter.md)  
 NPCも含みます。  
 
+`OcEmType` に列挙型も用意されている
+
 下記表は[TestUtility](../TestUtility/README.md)を使用して抽出しています。
 
 

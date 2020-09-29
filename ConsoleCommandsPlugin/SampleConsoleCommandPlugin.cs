@@ -267,6 +267,11 @@ namespace ReSTAR.Craftopia.Plugin
                 var infos = EnumerateObject(pl.gameObject, "");
                 string message = string.Join(Environment.NewLine, infos);
                 PopMessage(message);
+            }else if (subCommand == "layers") { 
+                for(int i = 0; i < 32; i++) {
+                    uint bits = (uint)(0x1 << i);
+                    values.Add($"{i}\t0x{bits:X}\t{LayerMask.LayerToName(i)}");
+                }
             } else if (subCommand == "file?") {
                 values.Add($"{this.GetType().Assembly.Location}");
                 string dir = Path.GetDirectoryName(this.GetType().Assembly.Location);
@@ -331,11 +336,12 @@ namespace ReSTAR.Craftopia.Plugin
             }
         }
         private IEnumerable<string> EnumerateObject(GameObject obj, string indent) {
+            uint bits = (uint)(0x1 << obj.layer);
             if (!obj.GetActive()) { //非表示のオブジェクトは表示しない
-                yield return $"{indent}{obj.name} : Layer{obj.layer} (inactive)";
+                yield return $"{indent}{obj.name} : Layer-{obj.layer}(0x{bits:X}) (inactive)";
                 yield break;
             }
-            yield return $"{indent}{obj.name} : Layer{obj.layer}";
+            yield return $"{indent}{obj.name} : Layer-{obj.layer}(0x{bits:X})";
 
             foreach (var c in obj.GetComponents(typeof(Component))) {
                 yield return $"{indent} -({c.name}:{c.GetType().Name})";

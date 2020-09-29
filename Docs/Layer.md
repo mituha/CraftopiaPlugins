@@ -32,3 +32,37 @@ if (base.gameObject.layer == 22 && other.gameObject.layer == 13 && this._Health.
     flag8 = true;
 }
 ```
+| Layer | Mask | 名前 |
+|----|-----|--------|  
+| 0 | 0x1 | Default |  
+| 1 | 0x2 | TransparentFX |  
+| 2 | 0x4 | Ignore Raycast |  
+| 3 | 0x8 |  |  
+| 4 | 0x10 | Water |  
+| 5 | 0x20 | UI |  
+| 6 | 0x40 |  |  
+| 7 | 0x80 |  |  
+| 8 | 0x100 | Terrain |  
+| 9 | 0x200 | DamagePl |  
+| 10 | 0x400 | DamageEm |  
+| 11 | 0x800 | AttackAll |  
+| 12 | 0x1000 | AttackPl |  
+| 13 | 0x2000 | AttackEm |  
+| 14 | 0x4000 | Pl |  
+| 15 | 0x8000 | Em |  
+| 16 | 0x10000 | Item |  
+| 17 | 0x20000 | _Dummy_OnMap |  
+| 18 | 0x40000 | Platform_OneWay |  
+| 19 | 0x80000 | Prop |  
+| 20 | 0x100000 | Event |  
+| 21 | 0x200000 | Climb |  
+| 22 | 0x400000 | DamageObj |  
+| 23 | 0x800000 | Pickup |  
+| 24 | 0x1000000 | CheckOtherBldg |  
+| 25 | 0x2000000 | InstallObj |  
+| 26 | 0x4000000 | AdultWall |  
+| 27 | 0x8000000 | _dummy27 |  
+| 28 | 0x10000000 | _dummy28 |  
+| 29 | 0x20000000 | Postprocessing |  
+| 30 | 0x40000000 | Effect |  
+| 31 | 0x80000000 | WaterChecker |  

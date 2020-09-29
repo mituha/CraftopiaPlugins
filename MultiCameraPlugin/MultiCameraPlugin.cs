@@ -2,6 +2,7 @@
 using Oc;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
@@ -79,8 +80,10 @@ namespace ReSTAR.Craftopia.Plugin
                     cameraNumbers = this.Manager.GetCameraNumbers();
                 } else if (subCommand == "distance" || subCommand == "angle") {
                     cameraNumbers = this.Manager.GetCameraNumbers();
-                }
-            };
+                } else if (subCommand == "mask") {
+                    cameraNumbers = this.Manager.GetCameraNumbers();
+                };
+            }
 
             bool isMulti = cameraNumbers?.Any() ?? false;
             if (cameraNumber > 0 || isMulti) {
@@ -162,6 +165,24 @@ namespace ReSTAR.Craftopia.Plugin
                     foreach (var cam in this.Manager.GetCameras(cameraNumbers)) {
                         this.Manager.SetVisible(cam, visible);
                     }
+                } else if (subCommand == "mask") {
+                    int mask = -1;  //全ビット
+                    if (parameters.Length >= 1) {
+                        if (parameters[0].IndexOf("0x") == 0) {
+                            uint n;
+                            if (uint.TryParse(parameters[0].Substring(2), NumberStyles.HexNumber, null, out n)) {
+                                mask = (int)n;
+                            }
+                        } else {
+                            int n;
+                            if (int.TryParse(parameters[0], out n)) {
+                                mask = n;
+                            }
+                        }
+                    }
+                    foreach (var cam in this.Manager.GetCameras(cameraNumbers)) {
+                        this.Manager.SetMask(cam, mask);
+                    }
                 } else if (subCommand == "distance") {
                     float? distance = null;
                     if (parameters.Length >= 1) {
@@ -228,12 +249,12 @@ namespace ReSTAR.Craftopia.Plugin
                     Func<OcGimmick, bool> predicate = g => g is OcGimmick_TreasureBox;    //宝箱
                     if (subCommand == "fish") {
                         predicate = g => g is OcGimmick_FishingPoint;    //釣り場
-                        //OcGimmick_WorldHeritageFragment   //世界遺産の断片
-                        //OcGimmick_DoorEmKillCount //キルカウントする扉
+                                                                         //OcGimmick_WorldHeritageFragment   //世界遺産の断片
+                                                                         //OcGimmick_DoorEmKillCount //キルカウントする扉
                     }
                     if (subCommand == "fragment") {
                         predicate = g => g is OcGimmick_WorldHeritageFragment;    //世界遺産の断片
-                        //OcGimmick_DoorEmKillCount //キルカウントする扉
+                                                                                  //OcGimmick_DoorEmKillCount //キルカウントする扉
                     }
                     if (subCommand == "door") {
                         predicate = g => g is OcGimmick_DoorEmKillCount;    //キルカウントする扉

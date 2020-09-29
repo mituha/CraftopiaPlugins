@@ -332,10 +332,10 @@ namespace ReSTAR.Craftopia.Plugin
         }
         private IEnumerable<string> EnumerateObject(GameObject obj, string indent) {
             if (!obj.GetActive()) { //非表示のオブジェクトは表示しない
-                yield return $"{indent}{obj.name}(inactive)";
+                yield return $"{indent}{obj.name} : Layer{obj.layer} (inactive)";
                 yield break;
             }
-            yield return $"{indent}{obj.name}";
+            yield return $"{indent}{obj.name} : Layer{obj.layer}";
 
             foreach (var c in obj.GetComponents(typeof(Component))) {
                 yield return $"{indent} -({c.name}:{c.GetType().Name})";

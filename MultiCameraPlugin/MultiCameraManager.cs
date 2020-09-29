@@ -207,6 +207,12 @@ namespace ReSTAR.Craftopia.Plugin
             camera.enabled = visible;
         }
 
+        public void SetMask(Camera camera, int mask) {
+            if (camera == null) { return; }
+            camera.cullingMask = mask;
+            UnityEngine.Debug.Log($"camera.cullingMask = {camera.cullingMask}(0x{camera.cullingMask:X})");
+        }
+
         #endregion
 
         public void SetDistance(Camera camera, float distance) {

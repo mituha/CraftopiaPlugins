@@ -2,6 +2,7 @@
 using Oc;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
@@ -12,7 +13,7 @@ namespace ReSTAR.Craftopia.Plugin
     /// <summary>
     /// 
     /// </summary>
-    [BepInPlugin("me.mituha.craftopia.plugins.multicameraplugin", "Multiple cameras plugin sample", "0.3.0.0")]
+    [BepInPlugin("me.mituha.craftopia.plugins.multicameraplugin", "Multiple cameras plugin sample", "0.5.0.0")]
     public class MultiCameraPlugin : ConsoleCommandPlugin
     {
         public MultiCameraPlugin() {
@@ -79,8 +80,18 @@ namespace ReSTAR.Craftopia.Plugin
                     cameraNumbers = this.Manager.GetCameraNumbers();
                 } else if (subCommand == "distance" || subCommand == "angle") {
                     cameraNumbers = this.Manager.GetCameraNumbers();
+                } else if (subCommand == "mask") {
+                    cameraNumbers = this.Manager.GetCameraNumbers();
+                } else if (subCommand == "clearflags") {
+                    cameraNumbers = this.Manager.GetCameraNumbers();
                 }
-            };
+
+                //実験的な処理
+                if(subCommand == "player" && parameters.Length >= 2 && parameters[0] == "update" && parameters[1] == "layer") {
+                    var pl = OcPlMng.Inst.getPl(0);
+                    UpdateLayer(pl.gameObject, 0, 14);
+                }
+            }
 
             bool isMulti = cameraNumbers?.Any() ?? false;
             if (cameraNumber > 0 || isMulti) {
@@ -162,6 +173,42 @@ namespace ReSTAR.Craftopia.Plugin
                     foreach (var cam in this.Manager.GetCameras(cameraNumbers)) {
                         this.Manager.SetVisible(cam, visible);
                     }
+                } else if (subCommand == "mask") {
+                    int mask = -1;  //全ビット
+                    if (parameters.Length >= 1) {
+                        if (parameters[0].IndexOf("0x") == 0) {
+                            uint n;
+                            if (uint.TryParse(parameters[0].Substring(2), NumberStyles.HexNumber, null, out n)) {
+                                mask = (int)n;
+                            }
+                        } else {
+                            int n;
+                            if (int.TryParse(parameters[0], out n)) {
+                                mask = n;
+                            }
+                        }
+                    }
+                    foreach (var cam in this.Manager.GetCameras(cameraNumbers)) {
+                        this.Manager.SetMask(cam, mask);
+                        cam.clearFlags = CameraClearFlags.Depth;
+                    }
+                } else if (subCommand == "clearflags") {
+                    CameraClearFlags? clearFlags = null;
+                    if (parameters.Length >= 1) {
+                        string s = parameters[0];
+
+                        foreach (var flag in Enum.GetValues(typeof(CameraClearFlags)).OfType<CameraClearFlags>()) {
+                            if (string.Compare(s, flag.ToString(), true) == 0) {
+                                clearFlags = flag;
+                                break;
+                            }
+                        }
+                    }
+                    if (clearFlags != null) {
+                        foreach (var cam in this.Manager.GetCameras(cameraNumbers)) {
+                            cam.clearFlags = clearFlags.Value;
+                        }
+                    }
                 } else if (subCommand == "distance") {
                     float? distance = null;
                     if (parameters.Length >= 1) {
@@ -218,19 +265,55 @@ namespace ReSTAR.Craftopia.Plugin
                     sc.SetTarget(target.Value, target2, position);
                 } else if (subCommand == "add" || subCommand == "new") {
                     var cam = this.Manager.GetOrCreateCamera(cameraNumber);
-                } else if (subCommand == "treasure") {
+                } else if (subCommand == "treasure" || subCommand == "fish" || subCommand == "fragment" || subCommand == "door" || subCommand == "pickup") {
                     //宝探し
+                    //TODO 宝に世界遺産の断片は含めるべきか
 
                     //OcGimmick_TreasureBox
                     //TODO 近いやつとか
                     var p0 = OcPlMng.Inst.getPl(0).gameObject.transform.position;
                     Func<OcGimmick, bool> predicate = g => g is OcGimmick_TreasureBox;    //宝箱
-
-                    int count = 1;  //TODO コマンドの変更
-                    int number = 1;
-                    bool pinned = false;
-                    foreach (var gimmick in OcGimmickMng.Inst.SearchGimmicks(predicate).OrderBy(g => Vector3.Distance(g.gameObject.transform.position, p0)).Take(count)) {
+                    if (subCommand == "fish") {
+                        predicate = g => g is OcGimmick_FishingPoint;    //釣り場
+                                                                         //OcGimmick_WorldHeritageFragment   //世界遺産の断片
+                                                                         //OcGimmick_DoorEmKillCount //キルカウントする扉
+                    }
+                    if (subCommand == "fragment") {
+                        predicate = g => g is OcGimmick_WorldHeritageFragment;    //世界遺産の断片
+                                                                                  //OcGimmick_DoorEmKillCount //キルカウントする扉
+                    }
+                    if (subCommand == "door") {
+                        predicate = g => g is OcGimmick_DoorEmKillCount;    //キルカウントする扉
+                    }
+                    if (subCommand == "pickup") {
+                        //Pickup は abstract ではない
+                        predicate = g => g.GetType() == typeof(OcGimmick_Pickup);
+                    }
+                    int order = 1;
+                    bool pin = false;
+                    bool all = false;
+                    foreach (var parameter in parameters) {
+                        int value;
+                        if (parameter == "pin") {
+                            pin = true;
+                        } else if (parameter == "all") {
+                            all = true;
+                        } else if (int.TryParse(parameter, out value)) {
+                            if (value >= 1) {
+                                order = value;
+                            }
+                        }
+                    }
+                    //指定番目のギミック取得
+                    var gimmick = OcGimmickMng.Inst.SearchGimmicks(predicate)
+                                    .Where(g => all ? true : !g.IsComplete) //処理完了していない(空いていない)もののみ
+                                    .OrderBy(g => Vector3.Distance(g.gameObject.transform.position, p0))
+                                    .Take(order)
+                                    .LastOrDefault();
+                    if (gimmick != null) {
                         var cam = this.Manager.GetOrCreateCamera(cameraNumber);
+
+                        //TODO ギミック用のスクリプト追加の方が良い
                         this.Manager.RemoveControlComponents(cam);
 
                         //追従不要なので直接位置調整
@@ -240,13 +323,10 @@ namespace ReSTAR.Craftopia.Plugin
                         cam.transform.position = t.position + t.forward * 2.0f + t.up * 2.0f;
                         cam.transform.LookAt(t);
 
-                        if (!pinned) {
-                            UnityEngine.Debug.Log($"{gimmick.name}[{t}] : {gimmick.GetType().Name}");
+                        if (pin) {
+                            //UnityEngine.Debug.Log($"{gimmick.name}[{t}] : {gimmick.GetType().Name}");
                             SingletonMonoBehaviour<OcMapMarkerMng>.Inst.useMarker_ForPlMaster(t.position);
-                            pinned = true;
                         }
-
-                        number++;
                     }
                 }
             }
@@ -282,6 +362,16 @@ namespace ReSTAR.Craftopia.Plugin
             return values.ToArray();
         }
 
-
+        private void UpdateLayer(GameObject obj, int srcLayer, int dstLayer) {
+            if (obj == null) { return; }
+            if (obj.layer == srcLayer) {
+                obj.layer = dstLayer;
+            }
+            int count = obj.transform.childCount;
+            for (int i = 0; i < count; i++) {
+                var child = obj.transform.GetChild(i);
+                UpdateLayer(child.gameObject, srcLayer, dstLayer);
+            }
+        }
     }
 }

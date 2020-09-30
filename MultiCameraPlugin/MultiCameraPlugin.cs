@@ -82,7 +82,9 @@ namespace ReSTAR.Craftopia.Plugin
                     cameraNumbers = this.Manager.GetCameraNumbers();
                 } else if (subCommand == "mask") {
                     cameraNumbers = this.Manager.GetCameraNumbers();
-                };
+                } else if (subCommand == "clearflags") {
+                    cameraNumbers = this.Manager.GetCameraNumbers();
+                }
             }
 
             bool isMulti = cameraNumbers?.Any() ?? false;
@@ -182,6 +184,24 @@ namespace ReSTAR.Craftopia.Plugin
                     }
                     foreach (var cam in this.Manager.GetCameras(cameraNumbers)) {
                         this.Manager.SetMask(cam, mask);
+                        cam.clearFlags = CameraClearFlags.Depth;
+                    }
+                } else if (subCommand == "clearflags") {
+                    CameraClearFlags? clearFlags = null;
+                    if (parameters.Length >= 1) {
+                        string s = parameters[0];
+
+                        foreach (var flag in Enum.GetValues(typeof(CameraClearFlags)).OfType<CameraClearFlags>()) {
+                            if (string.Compare(s, flag.ToString(), true) == 0) {
+                                clearFlags = flag;
+                                break;
+                            }
+                        }
+                    }
+                    if (clearFlags != null) {
+                        foreach (var cam in this.Manager.GetCameras(cameraNumbers)) {
+                            cam.clearFlags = clearFlags.Value;
+                        }
                     }
                 } else if (subCommand == "distance") {
                     float? distance = null;

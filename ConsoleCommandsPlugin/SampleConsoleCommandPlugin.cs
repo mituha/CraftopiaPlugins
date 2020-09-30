@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using HarmonyLib;
+using MapMagic;
 using Oc;
 using Oc.Item;
 using SR;
@@ -260,13 +261,16 @@ namespace ReSTAR.Craftopia.Plugin
             } else if (subCommand == "player") {
                 //Playerの構造確認
                 var pl = OcPlMng.Inst.getPl(0);
+                if (parameters.Length >= 1 && parameters[0] == "update") {
+                    UpdateLayer(pl.gameObject, 0, 14);
+                } else {
+                    UnityEngine.Debug.Log($"{pl.name}.gameObject.scene.name = {pl.gameObject.scene.name}");
+                    UnityEngine.Debug.Log($"\tpath : {pl.gameObject.scene.path}");
 
-                UnityEngine.Debug.Log($"{pl.name}.gameObject.scene.name = {pl.gameObject.scene.name}");
-                UnityEngine.Debug.Log($"\tpath : {pl.gameObject.scene.path}");
-
-                var infos = EnumerateObject(pl.gameObject, "");
-                string message = string.Join(Environment.NewLine, infos);
-                PopMessage(message);
+                    var infos = EnumerateObject(pl.gameObject, "");
+                    string message = string.Join(Environment.NewLine, infos);
+                    PopMessage(message);
+                }
             }else if (subCommand == "layers") { 
                 for(int i = 0; i < 32; i++) {
                     uint bits = (uint)(0x1 << i);
@@ -354,6 +358,18 @@ namespace ReSTAR.Craftopia.Plugin
                 foreach (var s in EnumerateObject(child.gameObject, indent)) {
                     yield return s;
                 }
+            }
+        }
+
+        private void UpdateLayer(GameObject obj,int srcLayer,int dstLayer) {
+            if(obj == null) { return; }
+            if(obj.layer == srcLayer) {
+                obj.layer = dstLayer;
+            }
+            int count = obj.transform.childCount;
+            for (int i = 0; i < count; i++) {
+                var child = obj.transform.GetChild(i);
+                UpdateLayer(child.gameObject, srcLayer, dstLayer);
             }
         }
 

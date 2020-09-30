@@ -156,6 +156,24 @@
 	+ 1<= number <=9
 		+ 指定番号のカメラの初期配置
 
+#### テスト
+キャラクターのみの表示を行います。
+ただし、何らかの当たり判定等に影響を及ぼす可能性があります。
+```
+# キャラクターの表示
+/camera1 player
+
+# layerの値を書き換えることで抜き出せるようにします
+/camera player update layer
+
+# キャラクターのみの表示
+/camera1 mask 0x4000
+
+# 背景のクリア
+/camera1 clearflags depth
+
+```
+
 #### TODO
 * `/camera main`
 	+ (開発者向け)カメラ情報出力

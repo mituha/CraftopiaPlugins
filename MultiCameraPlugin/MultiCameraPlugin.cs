@@ -13,7 +13,7 @@ namespace ReSTAR.Craftopia.Plugin
     /// <summary>
     /// 
     /// </summary>
-    [BepInPlugin("me.mituha.craftopia.plugins.multicameraplugin", "Multiple cameras plugin sample", "0.4.0.0")]
+    [BepInPlugin("me.mituha.craftopia.plugins.multicameraplugin", "Multiple cameras plugin sample", "0.5.0.0")]
     public class MultiCameraPlugin : ConsoleCommandPlugin
     {
         public MultiCameraPlugin() {
@@ -84,6 +84,12 @@ namespace ReSTAR.Craftopia.Plugin
                     cameraNumbers = this.Manager.GetCameraNumbers();
                 } else if (subCommand == "clearflags") {
                     cameraNumbers = this.Manager.GetCameraNumbers();
+                }
+
+                //実験的な処理
+                if(subCommand == "player" && parameters.Length >= 2 && parameters[0] == "update" && parameters[1] == "layer") {
+                    var pl = OcPlMng.Inst.getPl(0);
+                    UpdateLayer(pl.gameObject, 0, 14);
                 }
             }
 
@@ -356,6 +362,16 @@ namespace ReSTAR.Craftopia.Plugin
             return values.ToArray();
         }
 
-
+        private void UpdateLayer(GameObject obj, int srcLayer, int dstLayer) {
+            if (obj == null) { return; }
+            if (obj.layer == srcLayer) {
+                obj.layer = dstLayer;
+            }
+            int count = obj.transform.childCount;
+            for (int i = 0; i < count; i++) {
+                var child = obj.transform.GetChild(i);
+                UpdateLayer(child.gameObject, srcLayer, dstLayer);
+            }
+        }
     }
 }

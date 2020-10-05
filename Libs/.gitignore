@@ -1,6 +1,6 @@
 # Craftopia\BepInEx\core
 # Craftopia\Craftopia_Data\Managed
-#   からファイルを配置します。
+#   等からファイルを配置します。
 #   ソース管理には含めていません
 !.gitignore
 *.*
@@ -29,3 +29,14 @@ UnityEngine.PhysicsModule.dll
 UnityEngine.AnimationModule.dll
 # AssetBundle用
 UnityEngine.AssetBundleModule.dll
+
+# UniVRM関連
+# UniVRMを導入したUnityプロジェクトをビルドすることで生成
+VRM.dll
+MToon.dll
+DepthFirstScheduler.dll
+UniUnlit.dll
+UniHumanoid.dll
+UniJSON.dll
+ShaderProperty.Runtime.dll
+MeshUtility.dll

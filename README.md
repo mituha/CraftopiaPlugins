@@ -25,11 +25,16 @@ Hello world!
 複数カメラ表示サンプル
 
 ### TestHermony
+Hermonyの動作確認用
 
 ### TestPlugin
 適当に実験用
 
 ### TestUtility
+プラグインと関係のない実験やテスト用。
+
+### TestVRMPlugin
+VRMのテスト用
 
 ## プラグインの取っ掛かり
 [技術資料](./Docs/README.md)  

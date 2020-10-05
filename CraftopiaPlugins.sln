@@ -19,7 +19,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestUtility", "TestUtility\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestHarmony", "TestHarmony\TestHarmony.csproj", "{F90B0A58-20D0-462B-A677-78DF68AAABEA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiCameraPlugin", "MultiCameraPlugin\MultiCameraPlugin.csproj", "{59F1E091-BDE9-4E74-9669-617E1B845FE4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiCameraPlugin", "MultiCameraPlugin\MultiCameraPlugin.csproj", "{59F1E091-BDE9-4E74-9669-617E1B845FE4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestVRMPlugin", "TestVRMPlugin\TestVRMPlugin.csproj", "{EBF5C659-B6A5-4370-A4A7-96E28EE5BA98}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{59F1E091-BDE9-4E74-9669-617E1B845FE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{59F1E091-BDE9-4E74-9669-617E1B845FE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{59F1E091-BDE9-4E74-9669-617E1B845FE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBF5C659-B6A5-4370-A4A7-96E28EE5BA98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBF5C659-B6A5-4370-A4A7-96E28EE5BA98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBF5C659-B6A5-4370-A4A7-96E28EE5BA98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBF5C659-B6A5-4370-A4A7-96E28EE5BA98}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

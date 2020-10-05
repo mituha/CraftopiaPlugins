@@ -3,6 +3,11 @@ Tips
 
 小ネタ的なメモ
 
+
+## 参照するDLLの配置
+アセンブリは Craftopia_Data\Managed に入れる必要はない模様　　
+Craftopia\BepInEx\plugins\TestVRMPlugin\MToon.dll 等の配置でも読み込まれている　
+
 ## バージョン
 ```
 [Info   : Unity Log] ApplicationVersion = 20200924.0334

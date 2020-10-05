@@ -1,0 +1,66 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net46</TargetFramework>
+    <RootNamespace>ReSTAR.Craftopia.Plugin</RootNamespace>
+    <Version>0.5.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>..\Libs\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\Libs\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="BepInEx">
+      <HintPath>..\Libs\BepInEx.dll</HintPath>
+    </Reference>
+    <Reference Include="BepInEx.Harmony">
+      <HintPath>..\Libs\BepInEx.Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>..\Libs\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>..\Libs\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+     <Reference Include="UnityEngine.UI">
+      <HintPath>..\Libs\UnityEngine.UI.dll</HintPath>
+    </Reference>
+     <Reference Include="UnityEngine.UIModule">
+      <HintPath>..\Libs\UnityEngine.UIModule.dll</HintPath>
+    </Reference>
+     <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>..\Libs\UnityEngine.PhysicsModule.dll</HintPath>
+    </Reference>
+     <Reference Include="UnityEngine.AnimationModule">
+      <HintPath>..\Libs\UnityEngine.AnimationModule.dll</HintPath>
+    </Reference>
+
+     <Reference Include="VRM">
+      <HintPath>..\Libs\VRM.dll</HintPath>
+    </Reference>
+     <Reference Include="MToon">
+      <HintPath>..\Libs\MToon.dll</HintPath>
+    </Reference>
+     <Reference Include="DepthFirstScheduler">
+      <HintPath>..\Libs\DepthFirstScheduler.dll</HintPath>
+    </Reference>
+     <Reference Include="UniUnlit">
+      <HintPath>..\Libs\UniUnlit.dll</HintPath>
+    </Reference>
+     <Reference Include="UniHumanoid">
+      <HintPath>..\Libs\UniHumanoid.dll</HintPath>
+    </Reference>
+     <Reference Include="UniJSON">
+      <HintPath>..\Libs\UniJSON.dll</HintPath>
+    </Reference>
+     <Reference Include="ShaderProperty.Runtime">
+      <HintPath>..\Libs\ShaderProperty.Runtime.dll</HintPath>
+    </Reference>
+         <Reference Include="MeshUtility">
+      <HintPath>..\Libs\MeshUtility.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>

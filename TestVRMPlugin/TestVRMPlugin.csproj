@@ -7,6 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Unity\Assets\Editor\BuildAssetBundle.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Unity\Assets\Editor\BuildAssetBundle.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>..\Libs\0Harmony.dll</HintPath>
     </Reference>

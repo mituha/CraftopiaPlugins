@@ -88,6 +88,22 @@ public class BuildAssetBundle
             var path = AssetDatabase.GUIDToAssetPath(guid);
             UnityEngine.Debug.Log($"{path} : {guid}");
         }
+    }
+    [MenuItem("テスト/Shader読込")]
+    public static void LoadTest() {
 
+        string targetDir = "./AssetBundles";
+        string path = Path.Combine(targetDir, "VRM.Shaders");
+        var assetBundle = AssetBundle.LoadFromFile(path);
+#if false
+        foreach( var name in assetBundle.GetAllAssetNames()) {
+            //パッケージの名前になっており、Packages/com.vrmc.vrmshaders/.../*.shaer のようになる
+            UnityEngine.Debug.Log($"{name}");
+        }
+#endif
+        //Shaderの VRM/MToon 等でアクセスするには事前にロードするしかない
+        foreach (var shader in assetBundle.LoadAllAssets<Shader>()) {
+            UnityEngine.Debug.Log($"{shader.name}");
+        }
     }
 }

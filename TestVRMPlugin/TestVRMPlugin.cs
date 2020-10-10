@@ -50,12 +50,12 @@ namespace ReSTAR.Craftopia.Plugin
             if (subCommand == "load") {
                 values.Add($"{this.GetType().Assembly.Location}");
                 string dir = Path.GetDirectoryName(this.GetType().Assembly.Location);
-                values.Add(dir);
+                //values.Add(dir);
                 dir = Path.Combine(dir, "Models");
-                values.Add(dir);
+                //values.Add(dir);
                 var di = new DirectoryInfo(dir);
                 foreach (var fi in di.GetFiles()) {
-                    values.Add(fi.FullName);
+                    values.Add(fi.Name);
                 }
                 if (parameters.Length == 0) {
                     parameters = new string[] { "AliciaSolid.vrm" };
@@ -71,10 +71,13 @@ namespace ReSTAR.Craftopia.Plugin
                     context.EnableUpdateWhenOffscreen();
                     context.ShowMeshes();
 
-                    //TODO shader VRM/MToon not found. set Assets/VRM/Shaders/VRMShaders to Edit - project setting - Graphics - preloaded shaders
-                    //  shaderをAssetBundlesにして読み込めるようにする
-                    //  Shaderの検索部分に割り込む必要がある
-                    //    Shader.Find();にパッチするのが良い？
+                    //このまま読み込んでも、
+                    //  shader VRM/MToon not found. set Assets/VRM/Shaders/VRMShaders to Edit - project setting - Graphics - preloaded shaders
+                    //のエラーが出ます。
+                    //そのため、別途、shaderをAssetBundlesにして読み込めるようにして、
+                    //Shaderの検索部分に割り込んで、Shaderを渡す必要があります。
+                    //  AssetBundleの作成はUnityプロジェクト上で行う必要があります。作成補助用に、BuildAssetBundle.cs を用意してあるので参照してください。
+                    //ShaderPatch で Shader.Find();にパッチしています。
 
                     var o = context.Root;
 

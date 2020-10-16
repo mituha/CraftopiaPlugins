@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using HarmonyLib;
 using Oc;
 using System;
 using System.Collections.Generic;
@@ -86,8 +87,23 @@ namespace ReSTAR.Craftopia.Plugin
                     cameraNumbers = this.Manager.GetCameraNumbers();
                 }
 
+                if (subCommand == "pv") {
+                    int id = 0;
+                    if (parameters.Length >= 1) {
+                        int n;
+                        if (int.TryParse(parameters[0], out n)) {
+                            id = n;
+                        }
+                    }
+                    bool use = (1 <= id && id <= 9);
+                    AccessTools.FieldRefAccess<OcPlCam, bool>(OcPlCam.Inst, "_UseCamPV") = use;
+                    if (use) {
+                        AccessTools.FieldRefAccess<OcPlCam, int>(OcPlCam.Inst, "_CamPV_Id") = id;
+                    }
+                }
+
                 //実験的な処理
-                if(subCommand == "player" && parameters.Length >= 2 && parameters[0] == "update" && parameters[1] == "layer") {
+                if (subCommand == "player" && parameters.Length >= 2 && parameters[0] == "update" && parameters[1] == "layer") {
                     var pl = OcPlMng.Inst.getPl(0);
                     UpdateLayer(pl.gameObject, 0, 14);
                 }

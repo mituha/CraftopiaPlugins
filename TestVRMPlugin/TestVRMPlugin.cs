@@ -67,9 +67,8 @@ namespace ReSTAR.Craftopia.Plugin
                     var file = File.ReadAllBytes(path);
                     context.ParseGlb(file);
                     context.Load();
-                    context.ShowMeshes();
+
                     context.EnableUpdateWhenOffscreen();
-                    context.ShowMeshes();
 
                     //このまま読み込んでも、
                     //  shader VRM/MToon not found. set Assets/VRM/Shaders/VRMShaders to Edit - project setting - Graphics - preloaded shaders
@@ -87,7 +86,10 @@ namespace ReSTAR.Craftopia.Plugin
                         if (pos != null) {
                             o.transform.position = pos.Value + new Vector3(0f, 2.0f, 0f); //頭上に出す
                         }
+
                     }
+
+                    context.ShowMeshes();
                 }
             }
 

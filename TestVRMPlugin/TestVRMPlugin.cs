@@ -82,10 +82,27 @@ namespace ReSTAR.Craftopia.Plugin
 
                     var instPl = OcPlMng.Inst;
                     if (instPl != null) {
+#if false               //プレイヤー位置基準で顕現してみる
                         var pos = instPl.getPlPos(0);
                         if (pos != null) {
                             o.transform.position = pos.Value + new Vector3(0f, 2.0f, 0f); //頭上に出す
                         }
+#endif
+                        //プレイヤーに追随するようにする
+                        var pl = instPl.getPl(0);
+                        var animator = pl.Animator;
+#if false
+                        o.transform.SetParent(animator.transform, false);
+
+                        //テスト用に横にずらしてわかりやすくする
+                        o.transform.position = o.transform.position + o.transform.right * 1.5f;
+
+                        //アニメーション動作を使用可能とする
+                        o.GetComponent<Animator>().runtimeAnimatorController = animator.runtimeAnimatorController;
+#endif
+                        //プレイヤーへの追随やポーズの同期等を含めて別コンポーネントとします
+                        var sync = o.AddComponent<SyncHumanPose>();
+                        sync.Setup(animator);
 
                     }
 

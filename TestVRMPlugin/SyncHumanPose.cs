@@ -30,6 +30,17 @@ namespace ReSTAR.Craftopia.Plugin
             var scale = dstHeight / srcHeight;
             Debug.Log($"{dstHeight} / {srcHeight} = {scale}");
 #endif
+            //Player側の表示を消す
+            foreach (var renderer in source.GetComponentsInChildren<SkinnedMeshRenderer>()) {
+                Debug.Log($"{renderer.name}({renderer.GetType().Name}) OFF");
+                renderer.enabled = false;
+            }
+            //顔や髪の毛はMeshRenderer
+            foreach (var renderer in source.GetComponentsInChildren<MeshRenderer>()) {
+                Debug.Log($"{renderer.name}({renderer.GetType().Name}) OFF");
+                renderer.enabled = false;
+            }
+
 
 
             //位置も親子関係とする

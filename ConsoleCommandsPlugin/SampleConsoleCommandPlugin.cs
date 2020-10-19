@@ -2,6 +2,7 @@
 using HarmonyLib;
 using MapMagic;
 using Oc;
+using Oc.Em;
 using Oc.Item;
 using SR;
 using System;
@@ -33,6 +34,8 @@ namespace ReSTAR.Craftopia.Plugin
             AddCommand("ui", "*", ExecuteUICommand);
             AddCommand("map", "*", ExecuteMapCommand);
             //AddCommand("camera", "*", ExecuteCameraCommand);
+            AddCommand("em", "*", ExecuteEmCommand);
+            AddCommand("npc", "*", ExecuteEmCommand);
         }
 
         private readonly SceneChecker _SceneChecker = new SceneChecker();
@@ -271,8 +274,8 @@ namespace ReSTAR.Craftopia.Plugin
                     string message = string.Join(Environment.NewLine, infos);
                     PopMessage(message);
                 }
-            }else if (subCommand == "layers") { 
-                for(int i = 0; i < 32; i++) {
+            } else if (subCommand == "layers") {
+                for (int i = 0; i < 32; i++) {
                     uint bits = (uint)(0x1 << i);
                     values.Add($"{i}\t0x{bits:X}\t{LayerMask.LayerToName(i)}");
                 }
@@ -361,9 +364,9 @@ namespace ReSTAR.Craftopia.Plugin
             }
         }
 
-        private void UpdateLayer(GameObject obj,int srcLayer,int dstLayer) {
-            if(obj == null) { return; }
-            if(obj.layer == srcLayer) {
+        private void UpdateLayer(GameObject obj, int srcLayer, int dstLayer) {
+            if (obj == null) { return; }
+            if (obj.layer == srcLayer) {
                 obj.layer = dstLayer;
             }
             int count = obj.transform.childCount;
@@ -571,5 +574,75 @@ namespace ReSTAR.Craftopia.Plugin
             values.Add($"\tparent : {cam.transform.parent?.gameObject?.name}");
             return values.ToArray();
         }
+
+
+        /// <summary>
+        /// Em、NPC関連
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="subCommand"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        private bool ExecuteEmCommand(string command, string subCommand, string[] parameters) {
+            UnityEngine.Debug.Log($"{command} {subCommand}");
+            subCommand = subCommand.ToLower();  //小文字として比較
+
+            bool isNPC = command == "npc";
+
+            List<string> values = new List<string>();
+            if (subCommand == "list") {
+                var mng = OcEmMng.Inst;
+                var soEmArray = mng.SoEmArray;
+                var emArray = soEmArray.EmArray;
+                var pools = Traverse.Create(mng).Field<OcEmPool[]>("_EmPool").Value;
+                UnityEngine.Debug.Log($"EmArray {emArray.Length}");
+                UnityEngine.Debug.Log($"EmPools {pools.Length}");
+
+                //リスト
+                //OcEmTypeの FreeSlot、Max は除外
+                foreach (var emType in Enum.GetValues(typeof(OcEmType)).OfType<OcEmType>().Where(t => t < OcEmType.FreeSlot)) {
+                    if (emType.ToString().IndexOf("NPC_") == 0) {
+                        if (!isNPC) {
+                            continue;
+                        }
+                    } else if (emType.ToString().IndexOf("Ride_") == 0) {
+                        continue;
+                    } else {
+                        if (isNPC) {
+                            continue;
+                        }
+                    }
+                    //OcEmの列挙
+                    //近くの敵等はsearchNearestEm等で取得しても良い
+                    //  定義？的な値はSoEmArrayから取得？
+                    //実体化しているのは_EmPoolから
+                    var em = emArray[(int)emType];
+                    var pool = pools[(int)emType];
+                    values.Add($"[{emType}]{em.name} {pool?.getActiveCount()}");
+                    if (pool == null) {
+                        continue;
+                    }
+
+                    //private List<OcEm> _EmBuff = new List<OcEm>();
+                    var list = Traverse.Create(pool).Field<List<OcEm>>("_EmBuff").Value;
+                    foreach (var enemy in list) {
+                        if (enemy == null) { continue; }
+                        if (!enemy.IsActive()) { continue; }
+                        if (!enemy.isActiveAndEnabled) { continue; }
+
+                        values.Add($"\t[{enemy.GUID}]{enemy.transform.position}");
+                    }
+                }
+            }
+
+            if (values.Any()) {
+                //改行も有効
+                string message = string.Join(Environment.NewLine, values);
+                PopMessage(message);
+            }
+
+            return true;
+        }
+
     }
 }

@@ -83,7 +83,7 @@ namespace TestUtility
             foreach (var t in types) {
                 string opt = t.IsAbstract ? "abstract" : "";
                 //表としては基本クラスは異なる場合のみ表示
-                WriteLine($"| {t.Namespace} | {t.Name}  | {((t.BaseType != this.BaseType) ? t.BaseType?.Name : "")}    | {opt}  |  ");
+                WriteLine($"| {t.Namespace} | `{t.Name}`  | {((t.BaseType != this.BaseType) ? "`" + t.BaseType?.Name + "`" : "")}    | {opt}  |  ");
             }
         }
 

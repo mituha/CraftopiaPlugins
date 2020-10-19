@@ -19,6 +19,7 @@
 * [OcCharacter](OcCharacter.md)
     + [OcPl](OcPl.md)
     + [OcEm](OcEm.md)
+        + [OcEm_NPC_Base](OcEm_NPC_Base.md)  
 * [OcActState](OcActState.md)
     + [OcActState_Pl](OcActState_Pl.md)
 * [OcInstallObj](OcInstallObj.md)

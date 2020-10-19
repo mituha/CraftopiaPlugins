@@ -12,6 +12,14 @@ namespace TestUtility
     /// </summary>
     internal class EnumerateOcEmCommand : CreateClassDiagramCommand
     {
-        public EnumerateOcEmCommand() : base(typeof(OcEm)) { }
+        public EnumerateOcEmCommand() : base(typeof(OcEm), typeof(OcEm_NPC_Base)) { }
+    }
+
+    /// <summary>
+    /// NPCクラスの列挙
+    /// </summary>
+    internal class EnumerateOcEmNpcCommand : CreateClassDiagramCommand
+    {
+        public EnumerateOcEmNpcCommand() : base(typeof(OcEm_NPC_Base)) { }
     }
 }

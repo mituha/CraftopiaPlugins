@@ -1,26 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net46</TargetFramework>
     <RootNamespace>ReSTAR.Craftopia.Plugin</RootNamespace>
-    <Version>0.5.0</Version>
+    <Version>0.1.0</Version>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Unity\Assets\Editor\BuildAssetBundle.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Unity\Assets\Editor\BuildAssetBundle.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\ConsoleCommandsPlugin\ConsoleCommandPlugin.cs">
-      <Link>ConsoleCommandPlugin.cs</Link>
-    </Compile>
-    <Compile Include="..\CraftopiaSharp\CraftopiaSharp.cs">
-      <Link>CraftopiaSharp.cs</Link>
-    </Compile>
-  </ItemGroup>
 
   <ItemGroup>
     <Reference Include="0Harmony">
@@ -55,31 +39,6 @@
     </Reference>
      <Reference Include="UnityEngine.AssetBundleModule">
       <HintPath>..\Libs\UnityEngine.AssetBundleModule.dll</HintPath>
-    </Reference>
-    
-     <Reference Include="VRM">
-      <HintPath>..\Libs\VRM.dll</HintPath>
-    </Reference>
-     <Reference Include="MToon">
-      <HintPath>..\Libs\MToon.dll</HintPath>
-    </Reference>
-     <Reference Include="DepthFirstScheduler">
-      <HintPath>..\Libs\DepthFirstScheduler.dll</HintPath>
-    </Reference>
-     <Reference Include="UniUnlit">
-      <HintPath>..\Libs\UniUnlit.dll</HintPath>
-    </Reference>
-     <Reference Include="UniHumanoid">
-      <HintPath>..\Libs\UniHumanoid.dll</HintPath>
-    </Reference>
-     <Reference Include="UniJSON">
-      <HintPath>..\Libs\UniJSON.dll</HintPath>
-    </Reference>
-     <Reference Include="ShaderProperty.Runtime">
-      <HintPath>..\Libs\ShaderProperty.Runtime.dll</HintPath>
-    </Reference>
-         <Reference Include="MeshUtility">
-      <HintPath>..\Libs\MeshUtility.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>

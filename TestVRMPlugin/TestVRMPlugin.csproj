@@ -13,6 +13,11 @@
   <ItemGroup>
     <None Include="Unity\Assets\Editor\BuildAssetBundle.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\ConsoleCommandsPlugin\ConsoleCommandPlugin.cs">
+      <Link>ConsoleCommandPlugin.cs</Link>
+    </Compile>
+  </ItemGroup>
 
   <ItemGroup>
     <Reference Include="0Harmony">

@@ -600,13 +600,16 @@ namespace ReSTAR.Craftopia.Plugin
 
                 //リスト
                 //OcEmTypeの FreeSlot、Max は除外
-                foreach (var emType in Enum.GetValues(typeof(OcEmType)).OfType<OcEmType>().Where(t => t < OcEmType.FreeSlot)) {
+                //FreeSlotの扱い？
+                foreach (var emType in Enum.GetValues(typeof(OcEmType)).OfType<OcEmType>().Where(t => t < OcEmType.Max)) {
                     if (emType.ToString().IndexOf("NPC_") == 0) {
                         if (!isNPC) {
                             continue;
                         }
                     } else if (emType.ToString().IndexOf("Ride_") == 0) {
                         continue;
+                    } else if (emType == OcEmType.FreeSlot) {
+                        //用途未確認のため、常に含める
                     } else {
                         if (isNPC) {
                             continue;
@@ -618,7 +621,7 @@ namespace ReSTAR.Craftopia.Plugin
                     //実体化しているのは_EmPoolから
                     var em = emArray[(int)emType];
                     var pool = pools[(int)emType];
-                    values.Add($"[{emType}]{em.name} {pool?.getActiveCount()}");
+                    values.Add($"[{emType}]{em?.name} {pool?.getActiveCount()}");
                     if (pool == null) {
                         continue;
                     }
@@ -630,7 +633,8 @@ namespace ReSTAR.Craftopia.Plugin
                         if (!enemy.IsActive()) { continue; }
                         if (!enemy.isActiveAndEnabled) { continue; }
 
-                        values.Add($"\t[{enemy.GUID}]{enemy.transform.position}");
+                        //FreeSlotにNPC等はまとめて格納されている
+                        values.Add($"\t[{enemy.EmType}]{enemy.name} [{enemy.GUID}]{enemy.transform.position}");
                     }
                 }
             }

@@ -2,6 +2,7 @@
 using Oc;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using UnityEngine;
@@ -46,51 +47,68 @@ namespace ReSTAR.Craftopia.Plugin
                     values.Add(a.FullName);
                 }
             }
-
-            if (subCommand == "load") {
-                values.Add($"{this.GetType().Assembly.Location}");
-                string dir = Path.GetDirectoryName(this.GetType().Assembly.Location);
-                //values.Add(dir);
-                dir = Path.Combine(dir, "Models");
-                //values.Add(dir);
-                var di = new DirectoryInfo(dir);
-                foreach (var fi in di.GetFiles()) {
-                    values.Add(fi.Name);
+            OcCharacter target = null;
+            if (subCommand == "npc") {
+                //近くのNPCの検索
+                var cs = new CraftopiaSharp() { Trace = true };
+                var instPl = OcPlMng.Inst;
+                var pos = instPl?.getPlPos(0);
+                if (pos != null) {
+                    target = cs.SearchEnemy(pos.Value, "NPC");
+                    if (target == null) {
+                        UnityEngine.Debug.Log($"NPC not found");
+                    }
                 }
-                if (parameters.Length == 0) {
-                    parameters = new string[] { "AliciaSolid.vrm" };
+                if (target != null) {
+                    //コマンドをずらすことで共通化
+                    if (parameters.Length >= 1) {
+                        subCommand = parameters[0];
+                        parameters = parameters.Skip(1).ToArray();
+                    }
                 }
-                if (parameters.Length >= 1) {
-                    string path = Path.Combine(dir, parameters[0]);
-                    //読み込み
-                    var context = new VRMImporterContext();
-                    var file = File.ReadAllBytes(path);
-                    context.ParseGlb(file);
-                    context.Load();
+            } else if (subCommand == "load") {
+                //プレーヤーを対象
+                var instPl = OcPlMng.Inst;
+                target = instPl?.getPl(0);
+            }
 
-                    context.EnableUpdateWhenOffscreen();
+            if (subCommand == "load" && target != null) {
+                //TODO すでに適用済みの場合のチェック
+                //  専用のComponentでも追加して確認するのが良い。
+                //  暫定的にSyncHumanPoseのチェック
+                if (target.gameObject.GetComponentInChildren<SyncHumanPose>() == null) {
+                    values.Add($"{this.GetType().Assembly.Location}");
+                    string dir = Path.GetDirectoryName(this.GetType().Assembly.Location);
+                    //values.Add(dir);
+                    dir = Path.Combine(dir, "Models");
+                    //values.Add(dir);
+                    var di = new DirectoryInfo(dir);
+                    foreach (var fi in di.GetFiles()) {
+                        values.Add(fi.Name);
+                    }
+                    if (parameters.Length == 0) {
+                        parameters = new string[] { "AliciaSolid.vrm" };
+                    }
+                    if (parameters.Length >= 1) {
+                        string path = Path.Combine(dir, parameters[0]);
+                        //読み込み
+                        var context = new VRMImporterContext();
+                        var file = File.ReadAllBytes(path);
+                        context.ParseGlb(file);
+                        context.Load();
 
-                    //このまま読み込んでも、
-                    //  shader VRM/MToon not found. set Assets/VRM/Shaders/VRMShaders to Edit - project setting - Graphics - preloaded shaders
-                    //のエラーが出ます。
-                    //そのため、別途、shaderをAssetBundlesにして読み込めるようにして、
-                    //Shaderの検索部分に割り込んで、Shaderを渡す必要があります。
-                    //  AssetBundleの作成はUnityプロジェクト上で行う必要があります。作成補助用に、BuildAssetBundle.cs を用意してあるので参照してください。
-                    //ShaderPatch で Shader.Find();にパッチしています。
+                        context.EnableUpdateWhenOffscreen();
 
-                    var o = context.Root;
+                        //このまま読み込んでも、
+                        //  shader VRM/MToon not found. set Assets/VRM/Shaders/VRMShaders to Edit - project setting - Graphics - preloaded shaders
+                        //のエラーが出ます。
+                        //そのため、別途、shaderをAssetBundlesにして読み込めるようにして、
+                        //Shaderの検索部分に割り込んで、Shaderを渡す必要があります。
+                        //  AssetBundleの作成はUnityプロジェクト上で行う必要があります。作成補助用に、BuildAssetBundle.cs を用意してあるので参照してください。
+                        //ShaderPatch で Shader.Find();にパッチしています。
 
-                    var instPl = OcPlMng.Inst;
-                    if (instPl != null) {
-#if false               //プレイヤー位置基準で顕現してみる
-                        var pos = instPl.getPlPos(0);
-                        if (pos != null) {
-                            o.transform.position = pos.Value + new Vector3(0f, 2.0f, 0f); //頭上に出す
-                        }
-#endif
-                        //プレイヤーに追随するようにする
-                        var pl = instPl.getPl(0);
-                        var animator = pl.Animator;
+                        var o = context.Root;
+                        var animator = target.Animator;
 #if false
                         o.transform.SetParent(animator.transform, false);
 
@@ -104,9 +122,8 @@ namespace ReSTAR.Craftopia.Plugin
                         var sync = o.AddComponent<SyncHumanPose>();
                         sync.Setup(animator);
 
+                        context.ShowMeshes();
                     }
-
-                    context.ShowMeshes();
                 }
             }
 

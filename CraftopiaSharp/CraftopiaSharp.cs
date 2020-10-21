@@ -62,48 +62,55 @@ namespace ReSTAR.Craftopia.Plugin
         /// <returns></returns>
         public OcEm SearchEnemy(Vector3 position, string name) {
             var emTypes = GetEmTypes(name);
-            var enemy = emTypes.Select(t => SearchEnemy(position, t))
-                .Where(e => e != null)
-                        .OrderBy(e => Vector3.Distance(e.transform.position, position))
-                        .FirstOrDefault();
+            var enemy = SearchEnemy(position, emTypes);
             return enemy;
         }
 
         public OcEm SearchEnemy(Vector3 position, OcEmType emType) {
+            return SearchEnemy(position, new OcEmType[] { emType });
+        }
+
+        public OcEm SearchEnemy(Vector3 position, OcEmType[] emTypes) {
             var mng = OcEmMng.Inst;
             var soEmArray = mng.SoEmArray;
             var emArray = soEmArray.EmArray;
             var pools = Traverse.Create(mng).Field<OcEmPool[]>("_EmPool").Value;
 
-            if (this.Trace) {
-                UnityEngine.Debug.Log($"SearchEnemy({emType}) {position}");
-            }
-
-            //OcEmの列挙
-            //近くの敵等はsearchNearestEm等で取得しても良い
-            //  定義？的な値はSoEmArrayから取得？
-            //実体化しているのは_EmPoolから
-            var em = emArray[(int)emType];
-            var pool = pools[(int)emType];
-            if (pool == null) {
+            List<OcEm> enemies = new List<OcEm>();
+            foreach (var emType in emTypes.Concat(new OcEmType[] { OcEmType.FreeSlot })) {
                 if (this.Trace) {
-                    UnityEngine.Debug.Log($"\tOcEmPool is null");
+                    UnityEngine.Debug.Log($"SearchEnemy({emType}) {position}");
                 }
-                return null;
-            }
-            if (this.Trace) {
-                UnityEngine.Debug.Log($"\tOcEmPool {pool.getActiveCount()}/{pool.getListCount()}");
-            }
 
-            //private List<OcEm> _EmBuff = new List<OcEm>();
-            var list = Traverse.Create(pool).Field<List<OcEm>>("_EmBuff").Value;
-            if (this.Trace) {
-                UnityEngine.Debug.Log($"\t_EmBuff[{list.Count}]");
+                //OcEmの列挙
+                //近くの敵等はsearchNearestEm等で取得しても良い
+                //  定義？的な値はSoEmArrayから取得？
+                //実体化しているのは_EmPoolから
+                var em = emArray[(int)emType];
+                var pool = pools[(int)emType];
+                if (pool == null) {
+                    if (this.Trace) {
+                        UnityEngine.Debug.Log($"\tOcEmPool is null");
+                    }
+                    continue;
+                }
+                if (this.Trace) {
+                    UnityEngine.Debug.Log($"\tOcEmPool {pool.getActiveCount()}/{pool.getListCount()}");
+                }
+
+                //private List<OcEm> _EmBuff = new List<OcEm>();
+                var list = Traverse.Create(pool).Field<List<OcEm>>("_EmBuff").Value;
+                if (this.Trace) {
+                    UnityEngine.Debug.Log($"\t_EmBuff[{list.Count}]");
+                }
+                var enemy = list.Where(e => e != null && e.isActiveAndEnabled)
+                            .Where(e => emTypes.Contains(e.EmType))
+                            .OrderBy(e => Vector3.Distance(e.transform.position, position))
+                            .FirstOrDefault();
+                enemies.Add(enemy);
             }
-            var enemy = list.Where(e => e != null && e.isActiveAndEnabled)
-                        .OrderBy(e => Vector3.Distance(e.transform.position, position))
-                        .FirstOrDefault();
-            return enemy;
+            return enemies.OrderBy(e => Vector3.Distance(e.transform.position, position))
+                            .FirstOrDefault();
         }
     }
 }

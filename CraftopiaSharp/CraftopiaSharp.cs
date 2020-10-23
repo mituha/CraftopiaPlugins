@@ -11,7 +11,7 @@ namespace ReSTAR.Craftopia.Plugin
     /// <summary>
     /// TODO    色々テスト中
     /// </summary>
-    public class CraftopiaSharp
+    public partial class CraftopiaSharp
     {
         /// <summary>
         /// デバッグ用の出力の有無

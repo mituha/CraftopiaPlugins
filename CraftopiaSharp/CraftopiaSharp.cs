@@ -18,6 +18,8 @@ namespace ReSTAR.Craftopia.Plugin
         /// </summary>
         public bool Trace { get; set; } = false;
 
+        #region Enemy
+
         /// <summary>
         /// 名前に一致しそうなOcEmTypeを取得します
         /// </summary>
@@ -112,5 +114,19 @@ namespace ReSTAR.Craftopia.Plugin
             return enemies.OrderBy(e => Vector3.Distance(e.transform.position, position))
                             .FirstOrDefault();
         }
+
+        #endregion
+
+        #region Player
+
+        public OcPl _Player => GetPlayer(0);
+
+        public OcPl GetPl(int index = 0) => GetPlayer(index);
+
+        public OcPl GetPlayer(int index = 0) {
+            return OcPlMng.Inst.getPl(index);
+        }
+
+        #endregion
     }
 }

@@ -34,10 +34,7 @@ namespace ReSTAR.Craftopia.Plugin
             try {
                 UnityEngine.Debug.Log($">> ScriptOptions");
                 var options = ScriptOptions.Default
-                    .AddReferences("Assembly-CSharp");
-                //.AddReferences(AppDomain.CurrentDomain.GetAssemblies()); //この方式はエラー  Can't create a metadata reference to an assembly without location.
-                /*
-                    .AddReferences(Assembly.GetEntryAssembly())
+                    .AddReferences("Assembly-CSharp")   //文字列指定でなく、Assembly指定だとエラーになるかも？
                     .AddImports(
                         "System",
                         "System.Collections",
@@ -45,8 +42,8 @@ namespace ReSTAR.Craftopia.Plugin
                         "System.Linq"
                     )
                     .AddImports(
-                        "UnityEngine"
-                    );*/
+                        "UnityEngine"   //Vector3等用
+                    );
                 UnityEngine.Debug.Log($"<< ScriptOptions");
                 UnityEngine.Debug.Log($">> CSharpScript.Create");
                 var s = CSharpScript.Create("", options, this.GetType());

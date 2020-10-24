@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis.Scripting;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -17,15 +18,23 @@ namespace ReSTAR.Craftopia.Plugin
          * CraftopiaSharp.cs 部分は汎用的に他のプロジェクトでもリンクで使用するため、
          * partialとして分離。
          * 
+         * 内部的な変数は `__hoge` でアクセスできるようにする
+         * 
          */
         #endregion
 
         private ScriptState State { get; set; }
+        public Script __Script => this.State?.Script;
+        public Exception __Exception => this.State?.Exception;
+
+        public object __ReturnValue => this.State?.ReturnValue;
+        public ImmutableArray<ScriptVariable> __Variables => this.State?.Variables ?? new ImmutableArray<ScriptVariable>();
 
         public async void Initialize() {
             try {
                 UnityEngine.Debug.Log($">> ScriptOptions");
-                var options = ScriptOptions.Default;
+                var options = ScriptOptions.Default
+                    .AddReferences("Assembly-CSharp");
                 //.AddReferences(AppDomain.CurrentDomain.GetAssemblies()); //この方式はエラー  Can't create a metadata reference to an assembly without location.
                 /*
                     .AddReferences(Assembly.GetEntryAssembly())

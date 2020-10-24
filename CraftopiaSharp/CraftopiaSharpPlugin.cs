@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TMPro;
+using UnityEngine;
 
 namespace ReSTAR.Craftopia.Plugin
 {
@@ -76,23 +78,23 @@ namespace ReSTAR.Craftopia.Plugin
             //先頭に `#` を処理への切り替え等とします
             if (this.CraftopiaSharp != null) {
                 //起動している場合
-                if (string.Compare(message, "exit", true) == 0) {
+                if (string.Compare(message, "#exit", true) == 0) {
                     this.CraftopiaSharp = null;
                     EndEnterMessage();
                 } else {
                     this.CraftopiaSharp.Evaluate(message).Wait();
                     //TODO 現状、一旦入力欄を閉じないと入力が続かない
                     //TODO  独自のUIを作成
-                    EndEnterMessage();
+                    ClearInputMessage();
                 }
                 return true;
-            } else if (message.StartsWith("#")) {
+            } else if (string.Compare(message, "#cs", true) == 0) {
                 this.CraftopiaSharp = new CraftopiaSharp();
                 this.CraftopiaSharp.Initialize();
 
                 //TODO 現状、一旦入力欄を閉じないと入力が続かない
                 //TODO  独自のUIを作成
-                EndEnterMessage();
+                ClearInputMessage();
 
                 return true;
             } else {
@@ -119,8 +121,38 @@ namespace ReSTAR.Craftopia.Plugin
                 //  GetValueを行うことでメソッドが実行されます。
                 Traverse.Create(OcUI_ChatHandler.Inst).Method("PopMessage", netId, speakerName, message).GetValue();
             } else {
-                UnityEngine.Debug.Log($"OcUI_ChatHandler.Inst is null");
+                UnityEngine.Debug.LogError($"OcUI_ChatHandler.Inst is null");
             }
+        }
+
+        /// <summary>
+        /// チェック入力欄を閉じずにテキストをクリアします
+        /// </summary>
+        private void ClearInputMessage() {
+            var inst = OcUI_ChatHandler.Inst;
+            if (inst == null) { return; }
+#if true
+            var inputFeild = Traverse.Create(inst).Field<TMP_InputField>("inputFeild").Value;
+            inputFeild.text = string.Empty;
+            //StartEnterMessage相当で再度入力にフォーカス
+            var messageInput = Traverse.Create(inst).Field<GameObject>("messageInput").Value;
+            messageInput.SetActive(true);
+            inputFeild.ActivateInputField();
+            inputFeild.Select();
+            //TODO 入力部分にフォーカスがあたらない？
+#else
+            //閉じて開き直してもやはりフォーカスがあたらず、再度Enterを押すと入る？
+            EndEnterMessage();
+            StartEnterMessage();
+#endif
+        }
+
+        private void StartEnterMessage() {
+            var inst = OcUI_ChatHandler.Inst;
+            if (inst == null) { return; }
+            //Traverseによりメソッドを実行します。
+            //  GetValueを行うことでメソッドが実行されます。
+            Traverse.Create(inst).Method("StartEnterMessage").GetValue();
         }
 
         /// <summary>
@@ -172,6 +204,9 @@ namespace ReSTAR.Craftopia.Plugin
             PopMessage(message);
         }
         private void OnError(string message, Exception ex) {
+            //エラーはログにも書き出す
+            UnityEngine.Debug.LogError(message);
+            UnityEngine.Debug.LogException(ex);
             PopMessage(message);
         }
     }

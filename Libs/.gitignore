@@ -30,6 +30,9 @@ UnityEngine.AnimationModule.dll
 # AssetBundle用
 UnityEngine.AssetBundleModule.dll
 
+# TextMeshPro
+Unity.TextMeshPro.dll
+
 # UniVRM関連
 # UniVRMを導入したUnityプロジェクトをビルドすることで生成
 VRM.dll

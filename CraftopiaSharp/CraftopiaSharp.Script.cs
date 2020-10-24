@@ -1,5 +1,7 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
+using Oc;
+using SR;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -7,11 +9,49 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace ReSTAR.Craftopia.Plugin
 {
     partial class CraftopiaSharp
     {
+        #region ターミナルウィンドウ
+
+        private TerminalWindow _TerminalWindow;
+
+        private void InitializeTerminalWindow() {
+            if (_TerminalWindow == null) {
+                var inst = OcUI_ChatHandler.Inst;
+                var root = inst.GetParent();
+                var w = root.GetComponentInChildren<TerminalWindow>(true);
+                if (w != null) {
+                    _TerminalWindow = w;
+                }
+                if (_TerminalWindow == null) {
+                    //Window枠に相当する
+                    var o = new GameObject();
+                    o.SetParent(root);
+                    //TerminalWindowスクリプトを追加することで残りは自動生成
+                    var tw = o.AddComponent<TerminalWindow>();
+                    _TerminalWindow = tw;
+                    _TerminalWindow.OnInput += InputCode;
+                    _TerminalWindow.OnEscape += Escape;
+                }
+            }
+            _TerminalWindow.SetActive(true);
+        }
+        private void TerminateTerminalWindow() {
+            if (_TerminalWindow != null) {
+                _TerminalWindow.OnInput -= InputCode;
+                _TerminalWindow.OnEscape -= Escape;
+                _TerminalWindow?.gameObject?.Destroy();
+                _TerminalWindow = null;
+            }
+
+        }
+        #endregion
+
+
         #region 補足
         /*
          * スクリプトとしての処理部分。
@@ -31,6 +71,7 @@ namespace ReSTAR.Craftopia.Plugin
         public ImmutableArray<ScriptVariable> __Variables => this.State?.Variables ?? new ImmutableArray<ScriptVariable>();
 
         public async void Initialize() {
+            InitializeTerminalWindow();
             try {
                 UnityEngine.Debug.Log($">> ScriptOptions");
                 var options = ScriptOptions.Default
@@ -71,10 +112,17 @@ namespace ReSTAR.Craftopia.Plugin
             }
         }
 
+        public void Terminate() {
+            TerminateTerminalWindow();
+        }
+        private void InputCode(string code) {
+            this.OnInput?.Invoke(code);
+        }
+        public Action<string> OnInput;
+
         public Action<string> OnWriteLine;
         public Action<string, object> OnSuccess;
         public Action<string, Exception> OnError;
-
 
         public async Task Evaluate(string code) {
             this.OnWriteLine?.Invoke(code);
@@ -108,5 +156,22 @@ namespace ReSTAR.Craftopia.Plugin
         public void LogError(object message) {
             UnityEngine.Debug.LogError(message);
         }
+
+
+        public void StartEnterCode() {
+            _TerminalWindow?.OnTerminalWindowShow();
+        }
+        public void EndEnterCode() {
+            _TerminalWindow?.OnTerminalWindowHide();
+        }
+        public void ClearInputCode() {
+            _TerminalWindow?.ClearInputCode();
+        }
+
+        public Action OnEscape;
+        private void Escape() {
+            this.OnEscape?.Invoke();
+        }
+
     }
 }

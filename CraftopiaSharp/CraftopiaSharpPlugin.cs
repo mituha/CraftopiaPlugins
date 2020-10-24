@@ -75,27 +75,13 @@ namespace ReSTAR.Craftopia.Plugin
             if (message.IsNullOrEmpty()) { return false; }
             UnityEngine.Debug.Log($"message : {message}");
 
-            //先頭に `#` を処理への切り替え等とします
-            if (this.CraftopiaSharp != null) {
-                //起動している場合
-                if (string.Compare(message, "#exit", true) == 0) {
-                    this.CraftopiaSharp = null;
-                    EndEnterMessage();
-                } else {
-                    this.CraftopiaSharp.Evaluate(message).Wait();
-                    //TODO 現状、一旦入力欄を閉じないと入力が続かない
-                    //TODO  独自のUIを作成
-                    ClearInputMessage();
-                }
-                return true;
-            } else if (string.Compare(message, "#cs", true) == 0) {
-                this.CraftopiaSharp = new CraftopiaSharp();
-                this.CraftopiaSharp.Initialize();
-
-                //TODO 現状、一旦入力欄を閉じないと入力が続かない
-                //TODO  独自のUIを作成
-                ClearInputMessage();
-
+            //#cs でターミナルウィンドウによるスクリプト入力モードへ切り替えます。
+            //  それ以外はチャットウィンドウからは処理しません
+            if (string.Compare(message, "#cs", true) == 0) {
+                //チャットとしての入力は終了
+                EndEnterMessage();
+                //スクリプト入力に切り替える
+                StartEnterCode();
                 return true;
             } else {
                 return false;
@@ -176,6 +162,20 @@ namespace ReSTAR.Craftopia.Plugin
         }
         #endregion
 
+        private void StartEnterCode() {
+            if (this.CraftopiaSharp == null) {
+                this.CraftopiaSharp = new CraftopiaSharp();
+                this.CraftopiaSharp.Initialize();
+            }
+            this.CraftopiaSharp.StartEnterCode();
+        }
+
+        private void EndEnterCode() {
+            this.CraftopiaSharp?.EndEnterCode();
+            this.CraftopiaSharp?.Terminate();
+            this.CraftopiaSharp = null;
+        }
+
         private CraftopiaSharp _CraftopiaSharp;
         private CraftopiaSharp CraftopiaSharp {
             get { return _CraftopiaSharp; }
@@ -185,18 +185,33 @@ namespace ReSTAR.Craftopia.Plugin
                     var newValue = value;
                     _CraftopiaSharp = value;
                     if (oldValue != null) {
+                        oldValue.OnInput -= OnInput;
                         oldValue.OnWriteLine -= OnWriteLine;
                         oldValue.OnSuccess -= OnSuccess;
                         oldValue.OnError -= OnError;
+                        oldValue.OnEscape -= OnEscape;
                     }
                     if (newValue != null) {
+                        newValue.OnInput += OnInput;
                         newValue.OnWriteLine += OnWriteLine;
                         newValue.OnSuccess += OnSuccess;
                         newValue.OnError += OnError;
+                        newValue.OnEscape += OnEscape;
                     }
                 }
             }
         }
+
+        private void OnInput(string code) {
+            if (this.CraftopiaSharp == null) { return; }
+            //起動している場合
+            if (string.Compare(code, "#exit", true) == 0) {
+                EndEnterCode();
+            } else {
+                this.CraftopiaSharp.Evaluate(code).Wait();
+            }
+        }
+
         private void OnWriteLine(string message) {
             PopMessage(message);
         }
@@ -208,6 +223,10 @@ namespace ReSTAR.Craftopia.Plugin
             UnityEngine.Debug.LogError(message);
             UnityEngine.Debug.LogException(ex);
             PopMessage(message);
+        }
+
+        private void OnEscape() {
+            EndEnterCode();
         }
     }
 }

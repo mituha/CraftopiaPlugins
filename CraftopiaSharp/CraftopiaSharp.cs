@@ -50,6 +50,16 @@ namespace ReSTAR.Craftopia.Plugin
         /// </summary>
         public bool Trace { get; set; } = false;
 
+        /// <summary>
+        /// 位置を取得します
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="component"></param>
+        /// <returns></returns>
+        public Vector3 GetPosition<T>(T component) where T : Component {
+            return component.transform.position;
+        }
+
         #region Enemy
 
         /// <summary>
@@ -84,6 +94,15 @@ namespace ReSTAR.Craftopia.Plugin
             }
 
             return types.ToArray();
+        }
+
+        /// <summary>
+        /// 指定種類名の近い敵(NPC含む)を取得します
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public OcEm SearchEnemy(string name) {
+            return SearchEnemy(GetPosition(GetPlayer()), name);
         }
 
         /// <summary>
@@ -157,6 +176,33 @@ namespace ReSTAR.Craftopia.Plugin
 
         public OcPl GetPlayer(int index = 0) {
             return OcPlMng.Inst.getPl(index);
+        }
+
+        #endregion
+
+        #region マーカー
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="position"></param>
+        /// <returns></returns>
+        public Vector3 SetPin(Vector3 position) => UseMarker(position);
+        public Vector3 SetPin(int id, Vector3 position) => UseMarker(id, position);
+
+        /// <summary>
+        /// マーカーを設定します
+        /// </summary>
+        /// <param name="position"></param>
+        /// <returns></returns>
+        public Vector3 UseMarker(Vector3 position) {
+            //位置により制限がある？
+            OcMapMarkerMng.Inst.useMarker_ForPlMaster(position);
+            return position;
+        }
+        public Vector3 UseMarker(int id, Vector3 position) {
+            OcMapMarkerMng.Inst.useMarker(id, position);
+            return position;
         }
 
         #endregion

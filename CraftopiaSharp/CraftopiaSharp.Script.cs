@@ -84,6 +84,11 @@ namespace ReSTAR.Craftopia.Plugin
                     )
                     .AddImports(
                         "UnityEngine"   //Vector3等用
+                    )
+                    .AddReferences(this.GetType().Assembly) //こちらは、文字列指定("CraftopiaSharp")はエラー
+                                                            //.AddReferences("CraftopiaSharp")
+                    .AddImports(
+                        "ReSTAR.Craftopia.Plugin"   //拡張メソッド等を使用するには必要
                     );
                 UnityEngine.Debug.Log($"<< ScriptOptions");
                 UnityEngine.Debug.Log($">> CSharpScript.Create");

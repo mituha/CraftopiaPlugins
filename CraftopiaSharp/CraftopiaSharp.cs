@@ -32,9 +32,9 @@ namespace ReSTAR.Craftopia.Plugin
         /// </remarks>
         public static CraftopiaSharp Inst {
             get {
-                if(_Instance == null) {
+                if (_Instance == null) {
                     lock (_LockObject) {
-                        if(_Instance == null) {
+                        if (_Instance == null) {
                             _Instance = new CraftopiaSharp();
                         }
                     }
@@ -157,6 +157,22 @@ namespace ReSTAR.Craftopia.Plugin
 
         public OcPl GetPlayer(int index = 0) {
             return OcPlMng.Inst.getPl(index);
+        }
+
+        #endregion
+
+        #region チャット入力
+
+        /// <summary>
+        /// チャット入力による送信を行います
+        /// </summary>
+        /// <param name="message"></param>
+        /// <remarks>
+        /// 実際にはチャット入力欄の決定でこのメソッド相当が呼ばれます。  
+        /// MOD的には TrySendMessage に割り込むため、実質チャット入力用のコマンド発行が行えます。
+        /// </remarks>
+        public void TrySendMessage(string message) {
+            OcUI_ChatHandler.Inst.TrySendMessage(message);
         }
 
         #endregion

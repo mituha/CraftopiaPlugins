@@ -180,6 +180,66 @@ namespace ReSTAR.Craftopia.Plugin
 
         #endregion
 
+        #region Gimmick
+
+        /// <summary>
+        /// 指定条件の近いギミックを取得します
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="order">距離順の何番目(1-)を取得するか</param>
+        /// <param name="all">開いている宝箱等を含める場合、true</param>
+        /// <returns></returns>
+        public OcGimmick SearchGimmick(string name, int order = 1, bool all = false) {
+            return SearchGimmick(GetPosition(GetPlayer()), name, order, all);
+        }
+
+        /// <summary>
+        /// 指定条件の近いギミックを取得します
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="name"></param>
+        /// <param name="order">距離順の何番目(1-)を取得するか</param>
+        /// <param name="all">開いている宝箱等を含める場合、true</param>
+        /// <returns></returns>
+        public OcGimmick SearchGimmick(Vector3 position, string name, int order = 1, bool all = false) {
+            name = name?.ToLower() ?? string.Empty;
+            Func<OcGimmick, bool> predicate = g => g is OcGimmick_TreasureBox;    //宝箱
+            if (name.IndexOf("fish") >= 0) {
+                predicate = g => g is OcGimmick_FishingPoint;    //釣り場
+            }
+            if (name.IndexOf("fragment") >= 0 || name.IndexOf("heritage") >= 0) {
+                predicate = g => g is OcGimmick_WorldHeritageFragment;    //世界遺産の断片
+            }
+            if (name.IndexOf("door") >= 0) {
+                predicate = g => g is OcGimmick_DoorEmKillCount;    //キルカウントする扉
+            }
+            if (name.IndexOf("pickup") >= 0) {
+                //Pickup は abstract ではない
+                predicate = g => g.GetType() == typeof(OcGimmick_Pickup);
+            }
+            return SearchGimmick(position, predicate, order, all);
+        }
+
+        /// <summary>
+        /// 指定条件の近いギミックを取得します
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="predicate"></param>
+        /// <param name="order">距離順の何番目(1-)を取得するか</param>
+        /// <param name="all">開いている宝箱等を含める場合、true</param>
+        /// <returns></returns>
+        public OcGimmick SearchGimmick(Vector3 position, Func<OcGimmick, bool> predicate, int order = 1, bool all = false) {
+            //指定番目以下の距離のギミックを取得
+            var gimmick = OcGimmickMng.Inst.SearchGimmicks(predicate)
+                            .Where(g => all || !g.IsComplete) //処理完了していない(空いていない)もののみ
+                            .OrderBy(g => Vector3.Distance(g.gameObject.transform.position, position))
+                            .Take(order)
+                            .LastOrDefault();
+            return gimmick;
+        }
+
+        #endregion
+
         #region マーカー
 
         /// <summary>

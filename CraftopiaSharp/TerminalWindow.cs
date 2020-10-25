@@ -39,13 +39,22 @@ namespace ReSTAR.Craftopia.Plugin
             rc.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, rcChat.rect.width);
             rc.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, rcChat.rect.height * 5);    //TODO
 
+            var rcParent = this.gameObject.GetParent().GetComponent<RectTransform>();
+            rc.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 100, (rcParent?.rect.width ?? 600) / 2);
+            rc.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Bottom, 200, 200);
+
+
+
             //入力領域の追加
             var csInputFeild = Instantiate(chatInputFeild);
             csInputFeild.SetParent(this.gameObject);
+            csInputFeild.characterLimit = 0;    //文字数制限なし
+
             var rcScript = csInputFeild.GetComponent<RectTransform>();
             rcScript.pivot = new Vector2(0, 0);
-            rcScript.anchoredPosition = new Vector2(1, 0);
+            rcScript.anchoredPosition = new Vector2(0, 0);
             UnityEngine.Debug.Log($"Script input feild {rcScript}");
+
 
             csInputFeild.SetActive(true);
 
@@ -55,7 +64,7 @@ namespace ReSTAR.Craftopia.Plugin
             csInputFeild.onEndEdit.AddListener(new UnityAction<string>(InputCode));
             _InputField = csInputFeild;
 
-            var t = csInputFeild.placeholder as Text;
+            var t = csInputFeild.placeholder as TextMeshProUGUI;    //実装は TextMeshProUGUI の模様
             if (t != null) { t.text = "C# : "; }
 
             this.gameObject.SetActive(true);

@@ -9,10 +9,42 @@ using UnityEngine;
 namespace ReSTAR.Craftopia.Plugin
 {
     /// <summary>
-    /// TODO    色々テスト中
+    /// スクリプト実行時のグローバルなメソッド等を扱います。
+    /// また、汎用的なユーティリティとなります。
     /// </summary>
+    /// <remarks>
+    /// このソース、および、関連の CraftopiaSharp.xxx.cs を持っていくことで、他のプロジェクトでも利用可能です。
+    /// 
+    /// TODO 色々テスト中
+    /// </remarks>
     public partial class CraftopiaSharp
     {
+        #region シングルトン利用用
+        private static readonly object _LockObject = new object();
+        private static CraftopiaSharp _Instance;
+
+        /// <summary>
+        /// 他のプロジェクトでソースを利用する場合の簡略化用のインスタンスを取得します
+        /// </summary>
+        /// <remarks>
+        /// 現状、スクリプト実行用ではありません。
+        /// スクリプト実行用は個別インスタンスを利用しています
+        /// </remarks>
+        public static CraftopiaSharp Inst {
+            get {
+                if(_Instance == null) {
+                    lock (_LockObject) {
+                        if(_Instance == null) {
+                            _Instance = new CraftopiaSharp();
+                        }
+                    }
+                }
+                return _Instance;
+            }
+        }
+
+        #endregion
+
         /// <summary>
         /// デバッグ用の出力の有無
         /// </summary>

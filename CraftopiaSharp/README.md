@@ -21,6 +21,7 @@
 スクリプト入力用のUIが表示されます。  
 
 スクリプト欄で、`#exit` とコマンドを入力することで終了します。  
+`#load "test.cs"` 等でファイルから読み込んで実行します。
 
 それ以外は C# のコードが動作します。  
 [Craftopia.cs](https://github.com/mituha/CraftopiaPlugins/blob/main/CraftopiaSharp/CraftopiaSharp.cs) に実装されているメソッドは直接呼び出せます。

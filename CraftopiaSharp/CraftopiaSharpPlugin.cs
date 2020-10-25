@@ -3,6 +3,7 @@ using HarmonyLib;
 using Oc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ namespace ReSTAR.Craftopia.Plugin
     /// <summary>
     /// 
     /// </summary>
-    [BepInPlugin("me.mituha.craftopia.plugins.craftopiasharpplugin", "Craftpia#", "0.1.0.0")]
+    [BepInPlugin("me.mituha.craftopia.plugins.craftopiasharpplugin", "Craftpia#", "0.6.0.0")]
     internal sealed class CraftopiaSharpPlugin : BaseUnityPlugin
     {
         public CraftopiaSharpPlugin() {
@@ -208,6 +209,28 @@ namespace ReSTAR.Craftopia.Plugin
             if (string.Compare(code, "#exit", true) == 0) {
                 EndEnterCode();
             } else {
+                if (code.StartsWith("#load", StringComparison.InvariantCultureIgnoreCase)) {
+                    // "" 部分を取得
+                    int beginIndex = code.IndexOf('"');
+                    int endIndex = code.LastIndexOf('"');
+                    if (endIndex > beginIndex) {
+                        string file = code.Substring(beginIndex + 1, endIndex - beginIndex - 1);
+                        string path = Path.GetFullPath(file);
+                        //test.cs のままでは、下記
+                        //"D:\Program Files (x86)\Steam\steamapps\common\Craftopia\test.cs"
+                        if (!File.Exists(path)) {
+                            UnityEngine.Debug.Log($"Could not find file : {path}");
+                            //このディレクトリの下
+                            string dir = Path.GetDirectoryName(this.GetType().Assembly.Location);
+                            path = Path.Combine(dir, file);
+                            if (!File.Exists(path)) {
+                                UnityEngine.Debug.Log($"Could not find file : {path}");
+                            }
+                        }
+                        UnityEngine.Debug.Log($"Load : {path}");
+                        code = File.ReadAllText(path);
+                    }
+                }
                 this.CraftopiaSharp.Evaluate(code).Wait();
             }
         }

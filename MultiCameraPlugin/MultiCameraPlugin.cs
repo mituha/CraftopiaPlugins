@@ -14,7 +14,7 @@ namespace ReSTAR.Craftopia.Plugin
     /// <summary>
     /// 
     /// </summary>
-    [BepInPlugin("me.mituha.craftopia.plugins.multicameraplugin", "Multiple cameras plugin sample", "0.5.0.0")]
+    [BepInPlugin("me.mituha.craftopia.plugins.multicameraplugin", "Multiple cameras plugin sample", "0.6.0.0")]
     public class MultiCameraPlugin : ConsoleCommandPlugin
     {
         public MultiCameraPlugin() {

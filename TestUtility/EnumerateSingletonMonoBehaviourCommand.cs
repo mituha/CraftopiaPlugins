@@ -12,14 +12,14 @@ namespace TestUtility
 
 
         public override void Execute() {
-            var a = Program.AssemblyCSharp;
+            var assemblies = Program.TargetAssemblies;
 
             List<Type> singletonTypes = new List<Type>();
 
             //色々検索
             //  例外が発生する場合、関連ファイルの読み込みができていないため、
             //  Craftopia\Craftopia_Data\Managed のファイルを実行ディレクトリにコピーする必要があります。
-            foreach (var t in a.GetTypes()) {
+            foreach (var t in assemblies.SelectMany(a => a.GetTypes())) {
                 //WriteLine($"\t{t.Name}");
                 if (t.BaseType == null) { continue; }
                 //UnityEngine.Debug.Log($"\t\tBaseType:{t.BaseType.Name}");

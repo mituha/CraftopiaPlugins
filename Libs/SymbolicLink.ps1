@@ -50,6 +50,10 @@ $srcDir = Join-Path $dirCraftopia "Craftopia_Data\Managed\"
 $files = @(
     "Assembly-CSharp.dll"  # 
     "AD__Overcraft.dll"    #
+
+    "_AD_External_Steamworks.net.dll"   # AD__Overcraft.dll から参照 TestUtilityの列挙で必要
+    "_AD_External_VRoidSDK.dll"         # AD__Overcraft.dll から参照 TestUtilityの列挙で必要
+    "_AD_External_EasySave3.dll"         # AD__Overcraft.dll から参照 TestUtilityの列挙で必要
 )
 foreach($file in $files){
     Update-SymbolicLink $srcDir $file

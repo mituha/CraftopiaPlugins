@@ -15,6 +15,15 @@
 		<Reference Include="AD__Overcraft">
 			<HintPath>..\Libs\AD__Overcraft.dll</HintPath>
 		</Reference>
+		<Reference Include="_AD_External_Steamworks.net">
+			<HintPath>..\Libs\_AD_External_Steamworks.net.dll</HintPath>
+		</Reference>
+		<Reference Include="_AD_External_VRoidSDK">
+			<HintPath>..\Libs\_AD_External_VRoidSDK.dll</HintPath>
+		</Reference>
+		<Reference Include="_AD_External_EasySave3">
+			<HintPath>..\Libs\_AD_External_EasySave3.dll</HintPath>
+		</Reference>
 		<Reference Include="BepInEx">
 			<HintPath>..\Libs\BepInEx.dll</HintPath>
 		</Reference>

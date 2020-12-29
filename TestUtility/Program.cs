@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 
-namespace TestUtility
-{
-    class Program
-    {
+namespace TestUtility {
+    class Program {
         static void Main(string[] args) {
             List<Command> commands = new List<Command>();
             foreach (var t in Assembly.GetExecutingAssembly().GetTypes()) {
@@ -19,7 +18,11 @@ namespace TestUtility
             //処理するので読み込んでおく
             //AssemblyCSharp = Assembly.ReflectionOnlyLoad("Assembly-CSharp");
             //AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
-            AssemblyCSharp = AppDomain.CurrentDomain.Load("Assembly-CSharp");
+            var files = new string[] {
+                "Assembly-CSharp",
+                "AD__Overcraft"     //クラフトピア内の定義はこっちに移っている
+            };
+            TargetAssemblies = files.Select(f => AppDomain.CurrentDomain.Load(f)).ToArray();
 #if false
             foreach (var a in AppDomain.CurrentDomain.GetAssemblies()) {
                 Console.WriteLine($"{a.GetName().FullName}");
@@ -43,7 +46,11 @@ namespace TestUtility
                 retry = !string.IsNullOrEmpty(input);
                 if (0 <= n && n < count) {
                     var cmd = commands[n];
-                    cmd.Execute();
+                    try {
+                        cmd.Execute();
+                    } catch (Exception ex) {
+                        WriteException(ex);
+                    }
                 }
 
             } while (retry);
@@ -54,14 +61,28 @@ namespace TestUtility
             return Assembly.LoadFrom(args.Name);
         }
 
-        public static Assembly AssemblyCSharp { get; private set; }
+        public static Assembly[] TargetAssemblies { get; private set; }
+
+        private static void WriteException(Exception ex) {
+            WriteLine(ex.Message);
+            WriteLine(ex.ToString());
+            if(ex is ReflectionTypeLoadException rtlEx) {
+                foreach(var lex in rtlEx.LoaderExceptions) {
+                    WriteException(lex);
+                }
+            }
+        }
+
+        private static void WriteLine(string message) {
+            System.Diagnostics.Debug.WriteLine(message);
+            Console.WriteLine(message);
+        }
     }
 
     /// <summary>
     /// テスト用のコマンド
     /// </summary>
-    internal abstract class Command
-    {
+    internal abstract class Command {
         protected Command(string displayName) {
             this.DisplayName = displayName;
         }

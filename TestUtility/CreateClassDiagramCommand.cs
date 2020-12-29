@@ -6,13 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace TestUtility
-{
+namespace TestUtility {
     /// <summary>
     /// クラスを列挙してクラス図用出力生成
     /// </summary>
-    internal abstract class CreateClassDiagramCommand : Command
-    {
+    internal abstract class CreateClassDiagramCommand : Command {
         protected CreateClassDiagramCommand(Type baseType, params Type[] sentinelTypes) : base($"{baseType.Name}列挙") {
             this.BaseType = baseType;
             this.SentinelTypes = sentinelTypes ?? Array.Empty<Type>();
@@ -32,13 +30,13 @@ namespace TestUtility
             var baseType = this.BaseType;
             var sentinelTypes = this.SentinelTypes;
 
-            var a = Program.AssemblyCSharp;
+            var assemblies = Program.TargetAssemblies;
 
             List<Type> types = new List<Type>();
             //色々検索
             //  例外が発生する場合、関連ファイルの読み込みができていないため、
             //  Craftopia\Craftopia_Data\Managed のファイルを実行ディレクトリにコピーする必要があります。
-            foreach (var t in a.GetTypes()) {
+            foreach (var t in assemblies.SelectMany(a => a.GetTypes())) {
                 //WriteLine($"\t{t.Name}");
                 if (t.BaseType == null) { continue; }
                 //UnityEngine.Debug.Log($"\t\tBaseType:{t.BaseType.Name}");
@@ -54,7 +52,6 @@ namespace TestUtility
                         continue;
                     }
                 }
-
                 types.Add(t);
             }
             if (types.Any()) {

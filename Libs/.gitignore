@@ -2,8 +2,12 @@
 # Craftopia\Craftopia_Data\Managed
 #   等からファイルを配置します。
 #   ソース管理には含めていません
-!.gitignore
 *.*
+
+!.gitignore
+!SymbolicLink.ps1
+
+
 
 # 以下は必要ファイル
 

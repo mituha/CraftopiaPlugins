@@ -50,7 +50,7 @@ namespace TestUtility
         }
 
         private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args) {
-            Debug.Print($"AssemblyResolv : {args.Name}");
+            System.Diagnostics.Debug.Print($"AssemblyResolv : {args.Name}");
             return Assembly.LoadFrom(args.Name);
         }
 
@@ -71,7 +71,7 @@ namespace TestUtility
         public abstract void Execute();
 
         protected void WriteLine(string message) {
-            Debug.WriteLine(message);
+            System.Diagnostics.Debug.WriteLine(message);
             Console.WriteLine(message);
         }
     }
